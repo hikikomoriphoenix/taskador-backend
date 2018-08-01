@@ -44,8 +44,11 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
         exit("Exception while connecting to database: " . $ex->getMessage());
     }
 
-    // Check if username is unique. If not, return immediately together with
-    // an error status.
+    // Check if username is unique.
+    if (!usernameIsUnique($conn, $username)) {
+        http_response_code(422);
+        exit("Username is not unique");
+    }
 
     // Apply salt and hash for password.
     
@@ -54,4 +57,15 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     // Store new account and its fields to database.
     
     // return together with an OK status and the generated token.
+}
+
+function usernameIsUnique($conn, $username) {
+    $findSameUsername = "SELECT id FROM Accounts WHERE username = '" .
+            $username . "'";
+    $countSameUsername = $conn->exec($findSameUsername);
+    if ($countSameUsername > 0) {
+        return false;
+    } else {
+        return true;
+    }
 }
