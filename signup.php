@@ -45,7 +45,10 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     // process.
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
     
-    // Generate token and set expiry date. Set last active date
+    // Generate token and set expiry date. Set last active date to 'today'.
+    $token = generateToken(32);
+    $expiryDate = getExpiryDate();
+    $lastActive = date("Y m d");
     
     // Store new account and its fields to database.
     
