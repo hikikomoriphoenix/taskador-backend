@@ -1,5 +1,6 @@
 <?php
 http_response_code(500);
+require_once 'response/response.php';
 require_once 'secure/validate.php';
 require_once 'database/connect.php';
 require_once 'secure/password.php';
@@ -11,28 +12,16 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
 
     // Validate username and password. 
     if(!isset($username)) {
-        http_response_code(400);
-        exit(json_encode(array(
-            'message' => "Username is not set."
-        )));
+        errorResponse(400, "Username is not set.");
     } else if (!isset($password)) {
-        http_response_code(400);
-        exit(json_encode(array(
-            'message' => "Password is not set."
-        )));
+        errorResponse(400, "Password is not set.");
     } else {
         if (!validateUsername($username)) {
-            http_response_code(422);
-            exit(json_encode(array(
-                'message' => "Username is invalid."
-                )));
+            errorResponse(422, "Username is invalid.");
         }
         
-        if (!validatePassword($password)) {           
-            http_response_code(422);
-            exit(json_encode(array(
-                'message' => "Password is invalid."
-                )));
+        if (!validatePassword($password)) {   
+            errorResponse(422, "Password is invalid.");;
         }   
     }
 
@@ -41,13 +30,13 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     try {
         $conn = connectToDB();
     } catch (Exception $ex) {
-        exit("Exception while connecting to database: " . $ex->getMessage());
+        errorResponse(500, "Exception while connecting to database: " . 
+                $ex->getMessage());
     }
 
     // Check if username is unique.
     if (!usernameIsUnique($conn, $username)) {
-        http_response_code(422);
-        exit("Username is not unique");
+        errorResponse(422, "Username is not unique");
     }
 
     // Apply salt and hash for password.
