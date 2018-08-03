@@ -39,7 +39,11 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
         errorResponse(422, "Username is not unique");
     }
 
-    // Apply salt and hash for password.
+    // Hash password using BCRYPT(CRYPT_BLOWFISH) algorithm. The column to store
+    // this value should be CHAR of 60 in length since this algorithm will 
+    // always result into 60 characters including the salt generated in the
+    // process.
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
     
     // Generate token and set expiry date. Set last active date
     
