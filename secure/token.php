@@ -21,3 +21,14 @@ function generateToken($length) {
     return "$tokenInHex";
 }
 
+/**
+ * Returns a new expiry date for token. This is always set to 'tomorrow'.
+ * 
+ * @return String expiry date in "Y m d" string format.
+ */
+function getExpiryDate() {
+    $tomorrow = strtotime("tomorrow");
+    $expiryDate = date("Y m d", $tomorrow);
+    return $expiryDate;
+}
+
