@@ -3,12 +3,13 @@ http_response_code(500);
 require_once 'response/response.php';
 require_once 'secure/validate.php';
 require_once 'database/connect.php';
-require_once 'secure/password.php';
 require_once 'secure/token.php';
 require_once 'database/account.php';
 
-if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
+if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === "POST") {
+    /* @var $username string */
     $username = filter_input(INPUT_POST, 'username');
+    /* @var $password string */
     $password = filter_input(INPUT_POST, 'password');     
 
     // Validate username and password. 
@@ -22,7 +23,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
         }
         
         if (!validatePassword($password)) {   
-            errorResponse(422, "Password is invalid.");;
+            errorResponse(422, "Password is invalid.");
         }   
     }
 
@@ -44,11 +45,18 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     // this value should be CHAR of 60 in length since this algorithm will 
     // always result into 60 characters including the salt generated in the
     // process.
+    /* @var $hashedPassword string */
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    if ($hashedPassword ===false) {
+        errorResponse(500, "Failed to hash password");
+    }
     
     // Generate token and set expiry date. Set last active date to 'today'.
+    /* @var $token string */
     $token = generateToken(32);
+    /* @var $expiryDate string */
     $expiryDate = getExpiryDate();
+    /* @var $lastActive string */
     $lastActive = date("Y m d");
     
     // Store new account and its fields to database.
@@ -61,13 +69,14 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     }
     
     // return together with an OK status and the generated token.
-    $response = array('token' => $token);
+    $response = ['token' => $token];
     send($response);
 }
 
 function usernameIsUnique($conn, $username) {
     $findSameUsername = "SELECT id FROM Accounts WHERE username = '" .
             $username . "'";
+    /* @var $countSameUsername int */
     $countSameUsername = $conn->exec($findSameUsername);
     if ($countSameUsername > 0) {
         return false;
