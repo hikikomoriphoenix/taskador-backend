@@ -5,6 +5,7 @@ require_once 'secure/validate.php';
 require_once 'database/connect.php';
 require_once 'secure/password.php';
 require_once 'secure/token.php';
+require_once 'database/account.php';
 
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     $username = filter_input(INPUT_POST, 'username');
@@ -51,6 +52,13 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     $lastActive = date("Y m d");
     
     // Store new account and its fields to database.
+    try {
+        addNewAccount($conn, $username, $hashedPassword, $token, $expiryDate, 
+                $lastActive);
+    } catch (Exception $ex) {
+        errorResponse(500, "Exception while adding new account to database: " .
+                $ex->getMessage());         
+    }
     
     // return together with an OK status and the generated token.
 }
