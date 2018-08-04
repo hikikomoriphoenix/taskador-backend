@@ -13,6 +13,7 @@ header('Content-type: application/json');
 function send($responseData) {
     ob_clean();
     http_response_code(200);
+    /* @var $response string */
     $response = json_encode($responseData);
     exit($response);
 }
@@ -27,8 +28,7 @@ function send($responseData) {
 function errorResponse($responseCode, $message) {
     ob_clean();
     http_response_code($responseCode);
-    $response = json_encode(array(
-        'message' => $message
-    ));
+    /* @var $response string */
+    $response = json_encode(['message' => $message]);
     exit($response);
 }
