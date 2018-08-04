@@ -61,6 +61,8 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     }
     
     // return together with an OK status and the generated token.
+    $response = array('token' => $token);
+    send($response);
 }
 
 function usernameIsUnique($conn, $username) {
