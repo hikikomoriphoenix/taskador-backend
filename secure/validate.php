@@ -6,7 +6,12 @@
  * @return Boolean true if username is valid.
  */
 function validateUsername($username) {
-    return preg_match("^[\w]{1,16}$", $username);
+    $result = preg_match("^[\w]{1,16}$", $username);
+    if ($result === 1) {
+        return true;
+    } else if ($result === 0 || $result === false) {
+        return false;
+    }
 }
 
 /**
@@ -17,6 +22,11 @@ function validateUsername($username) {
  * @return Boolean true if password is valid.
  */
 function validatePassword($password) {
-    return preg_match("^[\S]{6,16}$", $password);   
+    $result =  preg_match("^[\S]{6,16}$", $password); 
+    if ($result === 1) {
+        return true;
+    } else if ($result === 0 || $result === false) {
+        return false;
+    }
 }
 
