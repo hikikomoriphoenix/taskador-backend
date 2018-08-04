@@ -1,38 +1,29 @@
 <?php
 http_response_code(500);
+require_once 'response/response.php';
 require_once 'secure/validate.php';
 require_once 'database/connect.php';
-require_once 'secure/password.php';
 require_once 'secure/token.php';
+require_once 'database/account.php';
 
-if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
+if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === "POST") {
+    /* @var $username string */
     $username = filter_input(INPUT_POST, 'username');
+    /* @var $password string */
     $password = filter_input(INPUT_POST, 'password');     
 
     // Validate username and password. 
     if(!isset($username)) {
-        http_response_code(400);
-        exit(json_encode(array(
-            'message' => "Username is not set."
-        )));
+        errorResponse(400, "Username is not set.");
     } else if (!isset($password)) {
-        http_response_code(400);
-        exit(json_encode(array(
-            'message' => "Password is not set."
-        )));
+        errorResponse(400, "Password is not set.");
     } else {
         if (!validateUsername($username)) {
-            http_response_code(422);
-            exit(json_encode(array(
-                'message' => "Username is invalid."
-                )));
+            errorResponse(422, "Username is invalid.");
         }
         
-        if (!validatePassword($password)) {           
-            http_response_code(422);
-            exit(json_encode(array(
-                'message' => "Password is invalid."
-                )));
+        if (!validatePassword($password)) {   
+            errorResponse(422, "Password is invalid.");
         }   
     }
 
@@ -41,17 +32,55 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') == "POST") {
     try {
         $conn = connectToDB();
     } catch (Exception $ex) {
-        exit("Exception while connecting to database: " . $ex->getMessage());
+        errorResponse(500, "Exception while connecting to database: " . 
+                $ex->getMessage());
     }
 
-    // Check if username is unique. If not, return immediately together with
-    // an error status.
+    // Check if username is unique.
+    if (!usernameIsUnique($conn, $username)) {
+        errorResponse(422, "Username is not unique");
+    }
 
-    // Apply salt and hash for password.
+    // Hash password using BCRYPT(CRYPT_BLOWFISH) algorithm. The column to store
+    // this value should be CHAR of 60 in length since this algorithm will 
+    // always result into 60 characters including the salt generated in the
+    // process.
+    /* @var $hashedPassword string */
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    if ($hashedPassword ===false) {
+        errorResponse(500, "Failed to hash password");
+    }
     
-    // Generate token and set expiry date. Set last active date
+    // Generate token and set expiry date. Set last active date to 'today'.
+    /* @var $token string */
+    $token = generateToken(32);
+    /* @var $expiryDate string */
+    $expiryDate = getExpiryDate();
+    /* @var $lastActive string */
+    $lastActive = date("Y m d");
     
     // Store new account and its fields to database.
+    try {
+        addNewAccount($conn, $username, $hashedPassword, $token, $expiryDate, 
+                $lastActive);
+    } catch (Exception $ex) {
+        errorResponse(500, "Exception while adding new account to database: " .
+                $ex->getMessage());         
+    }
     
     // return together with an OK status and the generated token.
+    $response = ['token' => $token];
+    send($response);
+}
+
+function usernameIsUnique($conn, $username) {
+    $findSameUsername = "SELECT id FROM Accounts WHERE username = '" .
+            $username . "'";
+    /* @var $countSameUsername int */
+    $countSameUsername = $conn->exec($findSameUsername);
+    if ($countSameUsername > 0) {
+        return false;
+    } else {
+        return true;
+    }
 }
