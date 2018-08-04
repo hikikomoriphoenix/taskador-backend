@@ -3,8 +3,9 @@ http_response_code(500);
 require_once '../config/config.php';
 
 /**
+ * Creates a PDO instance. This represents connection to the database.
  * 
- * @return \PDO
+ * @return PDO an instance to PDO.
  * @throws PDOException 
  */
 function connectToDB() {
