@@ -1,5 +1,5 @@
 <?php
-require_once '../../secure/Token.php';
+require_once '../../autoload.php';
 
 use PHPUnit\Framework\TestCase;
 
