@@ -14,8 +14,8 @@ class Account {
      */
     static function addNewAccount(PDO $pdo, $username, $password, $token, $expiryDate, 
             $lastActive) {
-        $insert = "INSERT INTO Accounts";
-        $params = "id, username, password, token, expiry_date, lastActive";
+        $insert = 'INSERT INTO Accounts';
+        $params = 'id, username, password, token, expiry_date, lastActive';
         $sql = "$insert ($params) VALUES ( ?, ? ,?, ?, ?, ?, ? );";
         try {
             $st = $pdo->prepare($sql);
@@ -27,7 +27,7 @@ class Account {
             $st->bindValue(6, $lastActive);
             $success = $st->execute();
             if (!$success) {
-                throw new Exception("Adding new account failed on call to execute()"
+                throw new Exception('Adding new account failed on call to execute()'
                         );
             }
         } catch (PDOException $ex) {
