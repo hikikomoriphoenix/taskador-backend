@@ -11,7 +11,7 @@ class Autoloader {
     
     static function autoload($class) {
         foreach (self::$dirs as $dir) {
-            $classFile = $dir . $class . ".php";
+            $classFile = ___DIR___ . '/' . $dir . $class . '.php';
             self::loadFileIfExists($classFile);
         }
     }
