@@ -1,5 +1,6 @@
 <?php
 spl_autoload_register('Autoloader::autoload');
+register_shutdown_function('handleFatalError');
 
 class Autoloader {
     static $dirs = [
@@ -11,7 +12,7 @@ class Autoloader {
     
     static function autoload($class) {
         foreach (self::$dirs as $dir) {
-            $classFile = $dir . $class . ".php";
+            $classFile = ___DIR___ . '/' . $dir . $class . '.php';
             self::loadFileIfExists($classFile);
         }
     }
@@ -20,6 +21,25 @@ class Autoloader {
         if (file_exists($classFile)) {
             require_once $classFile;
         }
+    }
+}
+
+function handleFatalError() {
+    $errorFile = "Unknown file";
+    $errorLine = 0;
+    $errorMsg = "Unknown error.";
+    
+    /* @var $error array */
+    $error = error_get_last();
+    if ($error != null) {
+        $errorFile = $error['file'];
+        $errorLine = $error['line'];
+        $errorMsg = $error['message'];
+        
+        $errorMessage = "FatalError@" . $errorFile . " " . $errorLine . " - " .
+                $errorMsg;
+        
+        Response::errorResponse(500, $errorMessage);
     }
 }
 
