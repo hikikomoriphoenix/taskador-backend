@@ -7,7 +7,7 @@ class Validate {
      * @return Boolean true if username is valid.
      */
     static function validateUsername($username) {
-        $result = preg_match("^[\w]{1,16}$", $username);
+        $result = preg_match('^[\w]{1,16}$', $username);
         if ($result === 1) {
             return true;
         } else if ($result === 0 || $result === false) {
@@ -23,7 +23,7 @@ class Validate {
      * @return Boolean true if password is valid.
      */
     static function validatePassword($password) {
-        $result =  preg_match("^[\S]{6,16}$", $password); 
+        $result =  preg_match('^[\S]{6,16}$', $password); 
         if ($result === 1) {
             return true;
         } else if ($result === 0 || $result === false) {
