@@ -2,7 +2,7 @@
 http_response_code(500);
 require_once 'autoload.php';
 
-if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === "POST") {
+if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     /* @var $username string */
     $username = filter_input(INPUT_POST, 'username');
     /* @var $password string */
@@ -10,16 +10,16 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === "POST") {
 
     // Validate username and password. 
     if(!isset($username)) {
-        Response::errorResponse(400, "Username is not set.");
+        Response::errorResponse(400, 'Username is not set.');
     } else if (!isset($password)) {
-        Response::errorResponse(400, "Password is not set.");
+        Response::errorResponse(400, 'Password is not set.');
     } else {
         if (!Validate::validateUsername($username)) {
-            Response::errorResponse(422, "Username is invalid.");
+            Response::errorResponse(422, 'Username is invalid.');
         }
         
         if (!Validate::validatePassword($password)) {   
-            Response::errorResponse(422, "Password is invalid.");
+            Response::errorResponse(422, 'Password is invalid.');
         }   
     }
 
@@ -28,13 +28,13 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === "POST") {
     try {
         $conn = Connect::connectToDB();
     } catch (Exception $ex) {
-        Response::errorResponse(500, "Exception while connecting to database: " . 
+        Response::errorResponse(500, 'Exception while connecting to database: ' . 
                 $ex->getMessage());
     }
 
     // Check if username is unique.
     if (!usernameIsUnique($conn, $username)) {
-        Response::errorResponse(422, "Username is not unique");
+        Response::errorResponse(422, 'Username is not unique');
     }
 
     // Hash password using BCRYPT(CRYPT_BLOWFISH) algorithm. The column to store
@@ -44,7 +44,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === "POST") {
     /* @var $hashedPassword string */
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
     if ($hashedPassword ===false) {
-        Response::errorResponse(500, "Failed to hash password");
+        Response::errorResponse(500, 'Failed to hash password');
     }
     
     // Generate token and set expiry date. Set last active date to 'today'.
@@ -60,7 +60,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === "POST") {
         Account::addNewAccount($conn, $username, $hashedPassword, $token, $expiryDate, 
                 $lastActive);
     } catch (Exception $ex) {
-        Response::errorResponse(500, "Exception while adding new account to database: " .
+        Response::errorResponse(500, 'Exception while adding new account to database: ' .
                 $ex->getMessage());         
     }
     

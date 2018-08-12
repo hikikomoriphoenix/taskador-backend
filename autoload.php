@@ -12,7 +12,7 @@ class Autoloader {
     
     static function autoload($class) {
         foreach (self::$dirs as $dir) {
-            $classFile = ___DIR___ . '/' . $dir . $class . '.php';
+            $classFile = __DIR__ . "/$dir" . "$class.php";
             self::loadFileIfExists($classFile);
         }
     }
@@ -25,9 +25,9 @@ class Autoloader {
 }
 
 function handleFatalError() {
-    $errorFile = "Unknown file";
+    $errorFile = 'Unknown file';
     $errorLine = 0;
-    $errorMsg = "Unknown error.";
+    $errorMsg = 'Unknown error.';
     
     /* @var $error array */
     $error = error_get_last();
@@ -36,8 +36,7 @@ function handleFatalError() {
         $errorLine = $error['line'];
         $errorMsg = $error['message'];
         
-        $errorMessage = "FatalError@" . $errorFile . " " . $errorLine . " - " .
-                $errorMsg;
+        $errorMessage = "FatalError@$errorFile $errorLine - $errorMsg";
         
         Response::errorResponse(500, $errorMessage);
     }

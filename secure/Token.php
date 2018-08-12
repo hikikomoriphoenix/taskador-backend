@@ -28,8 +28,8 @@ class Token {
      * @return String expiry date in "Y m d" string format.
      */
     static function getExpiryDate() {
-        $tomorrow = strtotime("tomorrow");
-        $expiryDate = date("Y m d", $tomorrow);
+        $tomorrow = strtotime('tomorrow');
+        $expiryDate = date('Y m d', $tomorrow);
         return $expiryDate;
     }
 }
