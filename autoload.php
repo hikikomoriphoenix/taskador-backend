@@ -31,14 +31,14 @@ function handleFatalError() {
     
     /* @var $error array */
     $error = error_get_last();
+    
     if ($error != null) {
         $errorFile = $error['file'];
         $errorLine = $error['line'];
-        $errorMsg = $error['message'];
-        
-        $errorMessage = "FatalError@$errorFile $errorLine - $errorMsg";
-        
-        Response::errorResponse(500, $errorMessage);
+        $errorMsg = $error['message'];        
     }
+    
+    $errorMessage = "FatalError@$errorFile($errorLine) - $errorMsg";
+    Response::errorResponse(500, $errorMessage);
 }
 
