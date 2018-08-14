@@ -1,5 +1,4 @@
 <?php
-http_response_code(500);
 require_once 'autoload.php';
 
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
