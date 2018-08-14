@@ -41,7 +41,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // always result into 60 characters including the salt generated in the
     // process.
     /* @var $hashedPassword string */
-    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    $hashedPassword = Password::hashPassword($password);
     if ($hashedPassword ===false) {
         Response::errorResponse(500, 'Failed to hash password');
     }
