@@ -3,6 +3,7 @@ use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase {
     var $responseCode;
+    var $responseContentType;
     public function testSend() {
         $url = 'http://localhost/taskador-backend/tests/response/200OKResponse.php';   
         $response = $this->sendRequest($url);
@@ -22,7 +23,7 @@ class ResponseTest extends TestCase {
     private function sendRequest($url) {
         $data = ['var' => '1'];
         $options = ['http' => [
-            'header'  => 'Content-type: application/x-www-form-urlencoded',
+            'header'  => 'Content-Type: application/x-www-form-urlencoded',
             'method' => 'POST',
             'content'=> http_build_query($data),
             'ignore_errors' => true
@@ -30,11 +31,14 @@ class ResponseTest extends TestCase {
         $context  = stream_context_create($options);
         $response = file_get_contents($url, false, $context);
         $this->responseCode = $http_response_header[0];
+        $this->responseContentType = $http_response_header[5];
         return $response; 
     }
     
     private function handleResponse($response, $expectedStatus, $expectedBody) {
         if ($response != false) {
+            $this->assertThat($this->responseContentType, $this->equalTo(
+                    'Content-Type: application/json'));
             $this->assertJson($response);
             $this->assertThat($this->responseCode, $this->equalTo($expectedStatus));
             $this->assertThat($response, $this->equalTo($expectedBody));

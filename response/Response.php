@@ -1,7 +1,5 @@
 <?php
-if (!headers_sent()) {
-    header('Content-type: application/json');
-}
+header('Content-Type: application/json');
 
 class Response {
     /**
