@@ -23,7 +23,7 @@ class Validate {
      * @return Boolean true if password is valid.
      */
     static function validatePassword($password) {
-        $result =  preg_match('/^[\S]{6,16}$/', $password); 
+        $result =  preg_match('/^[\S]{6,16}$/u', $password); 
         if ($result === 1) {
             return true;
         } else if ($result === 0 || $result === false) {
