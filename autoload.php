@@ -1,5 +1,6 @@
 <?php
 http_response_code(500);
+ob_start();
 
 spl_autoload_register('Autoloader::autoload');
 register_shutdown_function('handleFatalError');
