@@ -1,4 +1,7 @@
 <?php
+http_response_code(500);
+ob_start();
+
 spl_autoload_register('Autoloader::autoload');
 register_shutdown_function('handleFatalError');
 
@@ -24,21 +27,26 @@ class Autoloader {
     }
 }
 
-function handleFatalError() {
-    $errorFile = 'Unknown file';
-    $errorLine = 0;
-    $errorMsg = 'Unknown error.';
+function handleFatalError() {    
+    $responseCode = http_response_code();
+    $output = ob_get_contents(); 
     
     /* @var $error array */
     $error = error_get_last();
-    if ($error != null) {
-        $errorFile = $error['file'];
-        $errorLine = $error['line'];
-        $errorMsg = $error['message'];
-        
-        $errorMessage = "FatalError@$errorFile $errorLine - $errorMsg";
-        
-        Response::errorResponse(500, $errorMessage);
-    }
+    
+    if ($error != null || ($responseCode === 500 && empty($output))) { 
+        $errorFile = 'Unknown file';
+        $errorLine = 0;
+        $errorMsg = 'Unknown error.';
+
+        if ($error != null) {
+            $errorFile = $error['file'];
+            $errorLine = $error['line'];
+            $errorMsg = $error['message'];      
+        }
+
+        $errorMessage = "Error@$errorFile($errorLine) - $errorMsg";
+        Response::errorResponse(500, $errorMessage);        
+     }    
 }
 
