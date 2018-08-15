@@ -15,8 +15,8 @@ class Account {
     static function addNewAccount(PDO $pdo, $username, $password, $token, $expiryDate, 
             $lastActive) {
         $insert = 'INSERT INTO Accounts';
-        $params = 'id, username, password, token, expiry_date, lastActive';
-        $sql = "$insert ($params) VALUES ( ?, ? ,?, ?, ?, ?, ? );";
+        $params = 'id, username, password, token, expiry_date, last_active';
+        $sql = "$insert ($params) VALUES (?, ? ,?, ?, ?, ?);";
         try {
             $st = $pdo->prepare($sql);
             $st->bindValue(1, null);

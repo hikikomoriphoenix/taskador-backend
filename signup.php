@@ -68,12 +68,20 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     Response::send($response);
 }
 
+/**
+ * 
+ * @param PDO $conn
+ * @param String $username
+ * @return boolean
+ */
 function usernameIsUnique($conn, $username) {
-    $findSameUsername = "SELECT id FROM Accounts WHERE username = '" .
-            $username . "'";
-    /* @var $countSameUsername int */
-    $countSameUsername = $conn->exec($findSameUsername);
-    if ($countSameUsername > 0) {
+    $findSameUsername = "SELECT id FROM Accounts WHERE username = '$username'";
+    $query = $conn->prepare($findSameUsername);
+    $query->execute();
+    $results = $query->fetchAll();
+    $numResults = count($results);
+    
+    if ($numResults > 0) {
         return false;
     } else {
         return true;
