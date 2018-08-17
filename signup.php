@@ -32,7 +32,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
 
     // Check if username is unique.
-    if (!usernameIsUnique($conn, $username)) {
+    if (!Account::usernameIsUnique($conn, $username)) {
         Response::errorResponse(422, 'Username is not unique');
     }
 
@@ -66,24 +66,4 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // return together with an OK status and the generated token.
     $response = ['token' => $token];
     Response::send($response);
-}
-
-/**
- * 
- * @param PDO $conn
- * @param String $username
- * @return boolean
- */
-function usernameIsUnique($conn, $username) {
-    $findSameUsername = "SELECT id FROM Accounts WHERE username = '$username'";
-    $query = $conn->prepare($findSameUsername);
-    $query->execute();
-    $results = $query->fetchAll();
-    $numResults = count($results);
-    
-    if ($numResults > 0) {
-        return false;
-    } else {
-        return true;
-    }
 }
