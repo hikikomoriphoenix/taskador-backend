@@ -25,7 +25,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // Connect to database.
     $conn;
     try {
-        $conn = Connect::connectToDB();
+        $conn = Connect::connectToTaskadorDB();
     } catch (Exception $ex) {
         Response::errorResponse(500, 'Exception while connecting to database: ' . 
                 $ex->getMessage());
