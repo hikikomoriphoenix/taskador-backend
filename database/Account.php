@@ -11,6 +11,8 @@ class Account {
      * @param type $token a randomly generated token.
      * @param type $expiryDate expiry date for token.
      * @param type $lastActive date to indicate user's date of last activity.
+     * 
+     * @throws PDOException
      */
     static function addNewAccount(PDO $pdo, $username, $password, $token, $expiryDate, 
             $lastActive) {
@@ -92,6 +94,8 @@ class Account {
      * @param String $username account username
      * @return Mixed account token or false if account with given username is
      * not found.
+     * 
+     * @throws PDOException
      */
     static function getToken($conn, $username) {
         try {
@@ -124,6 +128,8 @@ class Account {
      * @param String $expiryDate token's expiry date.
      * @return String current token if not expired or new generated token if 
      * expired.
+     * 
+     * @throws PDOException
      */
     private static function freshifyToken($conn, $username, $token, $expiryDate){
         try {
@@ -144,6 +150,8 @@ class Account {
      * @param type $conn a PDO instance representing connection to database.
      * @param type $username account username
      * @return String a new generated token.
+     * 
+     * @throws PDOException
      */
     private static function updateToken($conn, $username) {
         try {
