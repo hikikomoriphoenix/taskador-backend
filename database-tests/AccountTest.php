@@ -31,5 +31,17 @@ class AccountTest extends TestCase {
         $unique = Account::usernameIsUnique($this->conn, $username);   
         $this->assertTrue($unique, 'Given username already exists');
     }
+    
+    public function testGetPassword() {
+        $username = 'test1';
+        
+        try {
+            $password = Account::getPassword($this->conn, $username);
+            $this->assertThat($password, $this->equalTo(
+                    '$2y$10$HZxaCFrGi9xVB9u7LhoevuPDtquuxjpiZbw/wogYHA4TjDG9LM83W'));
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting password: ' . $ex->getMessage());
+        }
+    }
 }
 
