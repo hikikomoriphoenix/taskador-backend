@@ -9,9 +9,14 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     
     $conn = Connect::connectToTaskadorDB();
     
+    // Get the hashed password from the account. This will be used to verify if
+    // the input password is correct.
     $correctPassword = Account::getPassword($conn, $username);
     
     if ($correctPassword != false) {
+        // If the input password is verified to be correct, then try to send the
+        // auth token. The getToken function checks if the token is expired and
+        // will generate a new one if it is.
         if (Password::verifyPassword($password, $correctPassword)) {
             try {
                 $token = Account::getToken($conn, $username);
