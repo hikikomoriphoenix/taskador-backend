@@ -109,7 +109,7 @@ class Account {
                 $token = $results[0]['token'];
                 $expiryDate = $results[0]['expiry_date'];
 
-                self::freshifyToken($conn, $username, $token, $expiryDate);
+                return self::freshifyToken($conn, $username, $token, $expiryDate);
             } else {
                 return false;
             }  

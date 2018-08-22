@@ -43,5 +43,16 @@ class AccountTest extends TestCase {
             $this->fail('Exception on getting password: ' . $ex->getMessage());
         }
     }
+    
+    public function testGetToken() {
+        $username = 'test1';
+        
+        try {
+            $token = Account::getToken($this->conn, $username);
+            $this->assertThat(strlen($token), $this->equalTo(32));
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting token: ' . $ex->getMessage());
+        }
+    }
 }
 
