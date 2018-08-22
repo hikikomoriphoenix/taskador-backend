@@ -12,8 +12,23 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     $correctPassword = Account::getPassword($conn, $username);
     
     if ($correctPassword != false) {
-        // TODO Check expiry date. If not expired return token. Otherwise,
-        // generate random token and save. Send response along with the token.
+        if (Password::verifyPassword($password, $correctPassword)) {
+            try {
+                $token = Account::getToken($conn, $username);
+            } catch (PDOException $ex) {
+                Response::errorResponse(500, 'Exception while getting token: '
+                        . $ex->getMessage());
+            }
+            
+            if ($token == false) {
+                Response::errorResponse(422, 'Username does not exist');
+            }
+            
+            $response = ['token' => $token];
+            Response::send($response);
+        } else {
+            Response::errorResponse(422, 'Incorrect password.');
+        }
     } else {
         Response::errorResponse(422, 'Username does not exist');
     }

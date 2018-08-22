@@ -78,4 +78,82 @@ class Account {
             return false;
         }
     }
+    
+    /**
+     * Get token from account. If token is expired, a new token is generated.
+     * 
+     * @param PDO $conn a PDO instance representing connection to database.
+     * @param String $username account username
+     * @return Mixed account token or false if account with given username is
+     * not found.
+     */
+    static function getToken($conn, $username) {
+        try {
+            $getExpiryDateAndToken = "SELECT token, expiry_date FROM Accounts WHERE"
+                    . " username = '$username'";
+            $query = $conn->prepare($getExpiryDateAndToken);
+            $query->execute();
+            $results = $query->fetchAll();
+
+            if (count($results) > 0) {
+                $token = $results[0]['token'];
+                $expiryDate = $results[0]['expiry_date'];
+
+                self::freshifyToken($conn, $username, $token, $expiryDate);
+            } else {
+                return false;
+            }  
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
+    
+    /**
+     * Check if current date is less than expiry date. If otherwise, then token
+     * is already expired and a new token should be generated.
+     * 
+     * @param PDO $conn connection to database.
+     * @param String $username account username.
+     * @param String $token account token.
+     * @param String $expiryDate token's expiry date.
+     * @return String current token if not expired or new generated token if 
+     * expired.
+     */
+    private static function freshifyToken($conn, $username, $token, $expiryDate){
+        try {
+            if (strtotime('today') < strtotime($expiryDate)) {
+                return $token;
+            } else {
+                return self::updateToken($conn, $username);
+            }
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
+    
+    /**
+     * Generate new token with a new expiry date. Update account with these new 
+     * values.
+     * 
+     * @param type $conn a PDO instance representing connection to database.
+     * @param type $username account username
+     * @return String a new generated token.
+     */
+    private static function updateToken($conn, $username) {
+        try {
+            $token = Token::generateToken(32);
+            $expiryDate = Token::getExpiryDate();
+
+            $updateTokenAndExpiryDate = "UPDATE Accounts SET token = ?, "
+                            . "expiry_date = ? WHERE username = '$username'";
+            $update = $conn->prepare($updateTokenAndExpiryDate);
+            $update->bindValue(1, $token);
+            $update->bindValue(2, $expiryDate);
+            $update->execute();
+
+            return $token;
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
 }
