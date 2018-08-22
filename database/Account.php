@@ -64,18 +64,24 @@ class Account {
      * @param String $username account username
      * @return mixed the password value of the account with the given username.
      * False if account with the given username does not exist.
+     * 
+     * @throws PDOException
      */
     static function getPassword($conn, $username) {
-        $getPassword = "SELECT password FROM Accounts WHERE username = "
-                . "'$username'";
-        $query = $conn->prepare($getPassword);
-        $query->execute();
-        $results = $query->fetchAll();
-        
-        if (count($results) > 0) {
-            return $results[0];
-        } else {
-            return false;
+        try {
+            $getPassword = "SELECT password FROM Accounts WHERE username = "
+                    . "'$username'";
+            $query = $conn->prepare($getPassword);
+            $query->execute();
+            $results = $query->fetchAll();
+
+            if (count($results) > 0) {
+                return $results[0]['password'];
+            } else {
+                return false;
+            }
+        } catch (PDOException $ex) {
+            throw $ex;
         }
     }
     
