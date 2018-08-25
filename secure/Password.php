@@ -10,4 +10,15 @@ class Password {
     static function hashPassword($password) {
         return password_hash($password, PASSWORD_BCRYPT);
     }
+    
+    /**
+     * Verify if the user's password input is correct.
+     * 
+     * @param String $password user's input password to verify.
+     * @param String $hash hashed password stored in the account.
+     * @return Boolean true if password is correct and false if not.
+     */
+    static function verifyPassword($password, $hash) {
+        return password_verify($password, $hash);
+    }
 }
