@@ -99,20 +99,39 @@ class Account {
      */
     static function getToken($conn, $username) {
         try {
-            $getExpiryDateAndToken = "SELECT token, expiry_date FROM Accounts WHERE"
-                    . " username = '$username'";
-            $query = $conn->prepare($getExpiryDateAndToken);
-            $query->execute();
-            $results = $query->fetchAll();
+            $results = self::getExpiryDateAndToken($conn, $username);
 
-            if (count($results) > 0) {
-                $token = $results[0]['token'];
-                $expiryDate = $results[0]['expiry_date'];
+            if (!empty($results)) {
+                $token = $results['token'];
+                $expiryDate = $results['expiry_date'];
 
                 return self::freshifyToken($conn, $username, $token, $expiryDate);
             } else {
                 return false;
-            }  
+            }
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
+    
+    /**
+     * Get the account token stored in database and its expiry date.
+     * 
+     * @param PDO $conn connection to database
+     * @param String $username account username
+     * @return Array an array containing values for token and expiry date with 
+     * corresponding keys, "token" and "expiry_date" respectively. Empty if 
+     * query didn't return results or username doesn't exist.
+     * @throws PDOException
+     */
+    static function getExpiryDateAndToken($conn, $username) {
+        try {
+            $getExpiryDateAndToken = "SELECT token, expiry_date FROM Accounts WHERE"
+                        . " username = '$username'";
+            $query = $conn->prepare($getExpiryDateAndToken);
+            $query->execute();
+            $results = $query->fetchAll();  
+            return $results[0];
         } catch (PDOException $ex) {
             throw $ex;
         }
