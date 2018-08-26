@@ -35,6 +35,9 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(500, 'No valid token available.');
     }
     
-    $response = ['token' => $accountToken];
-    Response::send($response);
+    if ($token == $accountToken) {
+        Response::send(array());
+    } else {
+        Response::errorResponse(422, 'Submitted token is not correct.');
+    }
 }
