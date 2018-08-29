@@ -13,29 +13,18 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
     
     try {
-        $expiryDateAndToken = Account::getExpiryDateAndToken($conn, $username);
-    } catch (PDOException $e) {
-        Response::errorResponse(500, 'Exception on getting expiry date and ' .
-                'token: ' . $e->getMessage());
-    }
+        $verified = Verify::verifyToken($conn, $username, $token);
+    } catch (GetExpiryDateAndTokenFailureException $e) {
+        Response::errorResponse(500, $e->getMessage());
+    } catch (NoAccountException $e) {
+        Response::errorResponse(422, $e->getMessage());
+    } catch (ExpiredTokenException $e) {
+        Response::errorResponse(422, $e->getMessage());
+    } catch (NoTokenException $e) {
+        Response::errorResponse(500, $e->getMessage());
+    }    
     
-    if (empty($expiryDateAndToken)) {
-        Response::errorResponse(422, 'No values for token and expiry date found'
-                . '. Account may not exist.' );
-    }
-    
-    $accountToken = $expiryDateAndToken['token'];
-    $expiryDate = $expiryDateAndToken['expiry_date'];
-    
-    if (strtotime('today') >= strtotime($expiryDate)) {
-        Response::errorResponse(422, 'Submitted token has already expired.');
-    }
-    
-    if (empty($accountToken)) {
-        Response::errorResponse(500, 'No valid token available.');
-    }
-    
-    if ($token == $accountToken) {
+    if ($verified) {
         Response::send(array());
     } else {
         Response::errorResponse(422, 'Submitted token is not correct.');
