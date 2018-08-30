@@ -34,5 +34,19 @@ class TasksTest extends TestCase {
             $this->fail('Exception on adding tasks: ' . $ex->getMessage());
         }        
     }
+    
+    public function testGetTasks() {
+        $username = 'test1';
+        
+        try {
+            $tasks = Tasks::getTasks($this->conn, $username);
+            $this->assertThat($tasks[0]['id'], $this->equalTo(1));
+            $this->assertThat($tasks[0]['task'], $this->equalTo('task1'));
+            $this->assertThat($tasks[2]['id'], $this->equalTo(3));
+            $this->assertThat($tasks[2]['task'], $this->equalTo('task3'));
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting tasks: ' . $ex->getMessage());
+        }
+    }
 }
 
