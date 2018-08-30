@@ -31,5 +31,13 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }  
     
     // Query for tasks from account
+    try {
+        $tasks = Tasks::getTasks($conn, $username);
+        $response = ['tasks' => $tasks];
+        Response::send($response);
+    } catch (Exception $ex) {
+        Response::errorResponse(500, 'Exception on getting tasks: ' . 
+                $ex->getMessage());
+    }
 }
 

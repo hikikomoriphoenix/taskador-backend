@@ -24,5 +24,27 @@ class Tasks {
             throw $e;
         }
     }
+ 
+    /**
+     * Get all the tasks under an account with the given username. Each item 
+     * contains the task\'s unique id, and the task itself as a string.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @return array an array of objects containing tasks and its corresponding
+     * id.
+     * @throws PDOException
+     */
+    static function getTasks(PDO $conn, $username) {
+        $select = "SELECT id, task FROM Tasks_ToDo WHERE username = '$username'";
+        try {
+            $query = $conn->prepare($select);
+            $query->execute();
+            $tasks = $query->fetchAll();
+            return $tasks;
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
 }
 
