@@ -42,4 +42,10 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
     
     // Insert tasks to database    
+    try {
+        Tasks::addTasks($conn, $username, $tasks);
+        Response::send(array());
+    } catch (Exception $ex) {
+        Response::errorResponse(500, $ex->getMessage());
+    }
 }
