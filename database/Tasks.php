@@ -74,5 +74,43 @@ class Tasks {
             throw $e;
         }        
     }
+    
+    /**
+     * Delete finished tasks from Tasks_ToDo table.
+     * 
+     * @param PDO $conn connection to database
+     * @param type $username account username
+     * @param type $tasks finished tasks
+     * @throws PDOException
+     */
+    static function deleteTasks(PDO $conn, $username, $tasks) {
+        $deleteFromAccount = "DELETE FROM Tasks_ToDo WHERE username = $username";
+        $count = count($tasks);
+        $idValues = self::prepareIdValuesString($count);        
+        $delete = "$deleteFromAccount AND WHERE id IN $idValues;"; 
+        
+        try {
+            $st = $conn->prepare($delete);
+            for ($j = 0; $j < $count; ++$j) {
+                $st->bindValue($j + 1, $tasks[$j]['id']);
+            }
+            $st->execute();            
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
+    
+    private static function prepareIdValuesString($count) {
+       for ($i = 0; $i < $count; ++$i) {
+            if ($i === 0) {
+                $idValues .= '(?';
+            } else if ($i === ($count - 1)) {
+                $idValues .= ', ?)';
+            } else {
+                $idValues .= ', ?';
+            }
+        } 
+        return $idValues;
+    }
 }
 
