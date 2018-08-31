@@ -42,7 +42,21 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
     
     // Save finished tasks to Tasks_Finished table
+    try {
+        Tasks::saveFinishedTasks($conn, $username, $tasks);
+    } catch (Exception $ex) {
+        Response::errorResponse(500, 'Exception on saving finished tasks: ' . 
+                $ex->getMessage());
+    }
     
     // Remove finished tasks from Tasks_ToDo table
+    try {
+        Tasks::deleteTasks($conn, $username, $tasks);
+    } catch (Exception $ex) {
+        Response::errorResponse(500, 'Exception on deleting finished tasks: ' .
+                $ex->getMessage());
+    }
+    
+    Response::send(array());
 }
 
