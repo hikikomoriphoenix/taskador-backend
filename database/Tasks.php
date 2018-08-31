@@ -46,5 +46,33 @@ class Tasks {
             throw $ex;
         }
     }
+    
+    /**
+     * Save finished tasks into account
+     * 
+     * @param PDO $conn connection to database
+     * @param type $username account username
+     * @param type $tasks finished tasks
+     * @throws PDOException
+     */
+    static function saveFinishedTasks(PDO $conn, $username, $tasks) {
+        $dateFinished = date('Y-m-d');
+        
+        $insert = 'INSERT INTO Tasks_Finished';
+        $params = 'id, username, task, date_finished';
+        $sql = "$insert ($params) VALUES (?, ?, ?, ?);";
+        try {
+            $st = $conn->prepare($sql);
+            foreach ($tasks as $task) {
+                $st->bindValue(1, null);
+                $st->bindValue(2, $username);
+                $st->bindValue(3, $task['task']);
+                $st->bindValue(4, $dateFinished);
+                $st->execute();
+            }
+        } catch (PDOException $e) {
+            throw $e;
+        }        
+    }
 }
 
