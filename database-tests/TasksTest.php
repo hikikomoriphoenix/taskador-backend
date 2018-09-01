@@ -66,5 +66,30 @@ class TasksTest extends TestCase {
                     $ex->getMessage());
         }
     }
+    
+    public function testDeleteTasks() {
+        $username1 = 'test1';
+        $username2 = 'test2';
+        
+        $tasks1 = [
+            ['tasks' => 'task1', 'id' => 1],
+            ['tasks' => 'task2', 'id' => 2],
+            ['tasks' => 'task3', 'id' => 3],
+        ];
+        
+        $tasks2 = [
+            ['tasks' => 'task1', 'id' => 4],
+            ['tasks' => 'task2', 'id' => 5],
+            ['tasks' => 'task3', 'id' => 6],
+        ];
+        
+        try {
+            Tasks::deleteTasks($this->conn, $username1, $tasks1);
+            Tasks::deleteTasks($this->conn, $username2, $tasks2);
+            $this->assertTrue(true);
+        } catch (Exception $ex) {
+            $this->fail('Exception on deleting tasks: ' . $ex->getMessage());
+        }
+    }
 }
 

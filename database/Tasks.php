@@ -84,10 +84,11 @@ class Tasks {
      * @throws PDOException
      */
     static function deleteTasks(PDO $conn, $username, $tasks) {
-        $deleteFromAccount = "DELETE FROM Tasks_ToDo WHERE username = $username";
+        $deleteFromAccount = 'DELETE FROM Tasks_ToDo WHERE username = '
+                . "'$username'";
         $count = count($tasks);
         $idValues = self::prepareIdValuesString($count);        
-        $delete = "$deleteFromAccount AND WHERE id IN $idValues;"; 
+        $delete = "$deleteFromAccount AND id IN $idValues;"; 
         
         try {
             $st = $conn->prepare($delete);
@@ -101,7 +102,8 @@ class Tasks {
     }
     
     private static function prepareIdValuesString($count) {
-       for ($i = 0; $i < $count; ++$i) {
+        $idValues = '';
+        for ($i = 0; $i < $count; ++$i) {
             if ($i === 0) {
                 $idValues .= '(?';
             } else if ($i === ($count - 1)) {
