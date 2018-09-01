@@ -48,5 +48,23 @@ class TasksTest extends TestCase {
             $this->fail('Exception on getting tasks: ' . $ex->getMessage());
         }
     }
+    
+    public function testSaveFinishedTasks() {
+        $username = 'test1';
+        
+        $tasks = [
+            ['task' => 'task1', 'id' => 1],
+            ['task' => 'task2', 'id' => 2],
+            ['task' => 'task3', 'id' => 3]
+        ];
+        
+        try {
+            Tasks::saveFinishedTasks($this->conn, $username, $tasks);
+            $this->assertTrue(true);
+        } catch (Exception $ex) {
+            $this->fail('Exception on saving finished tasks: ' . 
+                    $ex->getMessage());
+        }
+    }
 }
 
