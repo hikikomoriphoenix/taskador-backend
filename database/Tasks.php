@@ -114,5 +114,35 @@ class Tasks {
         } 
         return $idValues;
     }
+    
+    /**
+     * Get all tasks finished within the current week.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @return array an array of objects with a field named 'task'
+     * @throws PDOException
+     */
+    static function getFinishedTasks(PDO $conn, $username) {        
+        $selectFromAccount = "SELECT task FROM Tasks_Finished WHERE username = "
+                . "'$username'";
+        
+        // Get the date range of the current week
+        $sunday = date('Y-m-d', strtotime('Sunday this week'));
+        $saturday = date('Y-m-d', strtotime('Saturday this week'));
+        $thisWeek = "date_finished BETWEEN '$sunday' AND '$saturday'"; 
+        
+        // Order starting from the most recently finished task
+        $select = "$selectFromAccount AND $thisWeek ORDER BY id DESC;";
+        
+        try {
+            $query = $conn->prepare($select);
+            $query->execute();
+            $tasks = $query->fetchAll();
+            return $tasks;
+        } catch (PDOException $ex) {
+            throw $ex;
+        }        
+    }
 }
 
