@@ -128,8 +128,12 @@ class Tasks {
                 . "'$username'";
         
         // Get the date range of the current week
-        $sunday = date('Y-m-d', strtotime('Sunday this week'));
-        $saturday = date('Y-m-d', strtotime('Saturday this week'));
+        $day = date('w');
+        // $day is the value of today as a number between 0-6. Getting the date
+        // of sunday and saturday of this week is just a matter of getting the 
+        // difference of days between today and the said days.
+        $sunday = date('Y-m-d', strtotime('-' . $day . ' days'));
+        $saturday = date('Y-m-d', strtotime('+' . (6-$day) . ' days'));
         $thisWeek = "date_finished BETWEEN '$sunday' AND '$saturday'"; 
         
         // Order starting from the most recently finished task

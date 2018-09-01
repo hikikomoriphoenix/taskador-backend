@@ -91,5 +91,20 @@ class TasksTest extends TestCase {
             $this->fail('Exception on deleting tasks: ' . $ex->getMessage());
         }
     }
+    
+    public function testGetFinishedTasks() {
+        $username = 'test1';
+        
+        try {
+            $tasks = Tasks::getFinishedTasks($this->conn, $username);
+            //$this->assertEmpty($tasks);
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting finished tasks: ' . 
+                    $ex->getMessage());
+        }
+        
+        $this->assertThat($tasks[0]['task'], $this->equalTo('task3'));
+        $this->assertThat($tasks[2]['task'], $this->equalTo('task1'));
+    }
 }
 
