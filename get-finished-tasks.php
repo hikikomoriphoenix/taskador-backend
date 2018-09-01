@@ -31,5 +31,12 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
     
     // Query for finished tasks
-    
+    try {
+        $tasks = Tasks::getFinishedTasks($conn, $username);
+        $response = ['tasks' => $tasks];
+        Response::send($response);
+    } catch (Exception $ex) {
+        Response::errorResponse(500, 'Exception on getting finished tasks' . 
+                $ex->getMessage());
+    }    
 }
