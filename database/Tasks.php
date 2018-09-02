@@ -171,5 +171,31 @@ class Tasks {
             throw $ex;
         }
     }
+    
+    /**
+     * Get all finished tasks which has not yet been parsed to add its words to 
+     * the list of words used for task statements or phrases.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @param string $idLastParsed id of task that was last parsed
+     * @return string an array with elements containing an 'id' field and a
+     * 'task' field
+     * @throws PDOException
+     */
+    static function getUnparsedTasks(PDO $conn, $username, $idLastParsed) {
+        $selectFromAccount = 'SELECT id, task FROM Tasks_Finished WHERE username'
+                . " = $username";
+        $unParsed = "AND id > $idLastParsed ORDER BY id ASC";
+        $select = "$selectFromAccount $unParsed;";
+        
+        try {
+            $query = $conn->prepare($select);
+            $query->execute();
+            return $query->fetchAll();
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
 }
 
