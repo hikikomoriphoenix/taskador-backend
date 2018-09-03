@@ -92,5 +92,103 @@ class Words {
         }
         return $entries;
     }
+    
+    /**
+     * Add words to list of words used in tasks. If a word already exist in the 
+     * list, then update its count.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @param string $words an array of objects with a 'word' field and a
+     * 'count' field
+     */
+    static function addWordsToList(PDO $conn, $username, $words) {
+        try {
+            foreach ($words as $word) {
+                $wordId = self::getWordID($conn, $username, $word['word']);
+                if ($wordId === false) {
+                    self::addWordToList($conn, $username, $word['word']);
+                } else {
+                    self::updateCount($conn, $username, $wordId,
+                            $word['count']);
+                }
+            }
+        } catch (PDOException $ex) {
+            throw $ex;
+        }    
+    }
+    
+    /**
+     * Get the id of a given word from account.
+     * 
+     * @param PDO $conn connection to database
+     * @param type $username account username
+     * @param type $word word to find
+     * @return mixed id of word, false if word does not exist
+     * @throws PDOException
+     */
+    static function getWordID(PDO $conn, $username, $word) {
+        $select = "SELECT id FROM Words WHERE username = '$username' AND word"
+                . " = '$word';";        
+        try {
+            $query = $conn->prepare($select);
+            $query->execute();
+            $result = $query->fetchAll();
+            if (empty($result[0]['id'])) {
+                return false;
+            } else {
+                return $result[0]['id'];
+            }            
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
+    
+    /**
+     * Add new word to Words table with an initial count of 1.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @param string $word word to add
+     * @throws PDOException
+     */
+    static function addWordToList(PDO $conn, $username, $word) {
+        $insert = 'INSERT INTO Words';
+        $params = 'id, username, word, count';
+        $sql = "$insert ($params) VALUES (?, ?, ?, ?);";
+        try {
+            $st = $conn->prepare($sql);
+            $st->bindValue(1, null);
+            $st->bindValue(2, $username);
+            $st->bindValue(3, $word);
+            $st->bindValue(4, 1);
+            $st->execute();
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
+    
+    /**
+     * Increment a word's count of number of times being used in tasks.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @param int $id id of word
+     * @param int $count amount to increment counts 
+     * @throws PDOException
+     */
+    static function updateCount(PDO $conn, $username, $id, $count) {
+        $update = 'UPDATE Words';
+        $set = "SET count = count + $count";
+        $whereUsername = "WHERE username = '$username'";
+        $andId = "AND id = $id";
+        $sql = "$update $set $whereUsername $andId;";
+        try {
+            $st = $conn->prepare($sql);
+            $st->execute();
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    } 
 }
 
