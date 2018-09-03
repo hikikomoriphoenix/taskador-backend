@@ -51,26 +51,35 @@ class Words {
     
     /**
      * Find words in each task. This process ensures no duplicate words are
-     * added into the returned array.
+     * added into the returned array but instead counts every repeated 
+     * occurrences.
      * 
      * @param array $tasks an array of tasks to be parsed for words
-     * @return array an array of words in lowercase and without any special 
-     * characters except hyphen and apostrophe.
+     * @return array Entries for the words list containing fields named 'word' 
+     * for word and 'count' for the number of occurrences for the word. Words 
+     * are in lowercase and without any special characters except hyphen and 
+     * apostrophe.
      */
     static function parseTasks(array $tasks) {
-        $words = array();
+        $entries = array();
         foreach ($tasks as $task) {
             $taskString = $task['task'];
             $taskStringClean = preg_replace("/[^\w\-\']/u", ' ', $taskString);
             $result = preg_split("/[\s]+/", $taskStringClean);
             $resultLowerCase = array_map('strtolower', $result);
             foreach ($resultLowerCase as $word) {
-                if(!in_array($word, $words)) {
-                    array_push($words, $word);
+                $words = array_column($entries, 'word');
+                $index = array_search($word, $words);
+                if($index === false) {
+                    $entry['word'] = $word;
+                    $entry['count'] = 1;
+                    array_push($entries, $entry);
+                } else {
+                    $entries[$index]['count']++;                    
                 }
             }
         }
-        return $words;
+        return $entries;
     }
 }
 
