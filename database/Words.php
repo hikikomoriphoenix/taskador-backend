@@ -64,10 +64,21 @@ class Words {
         $entries = array();
         foreach ($tasks as $task) {
             $taskString = $task['task'];
+            
+            // Replace special characters excluding hyphen and apostrophe with a
+            // white space.
             $taskStringClean = preg_replace("/[^\w\-\']/u", ' ', $taskString);
+            
+            // Split strings separated by white spaces. Each string represents a
+            // word.
             $result = preg_split("/[\s]+/", $taskStringClean);
+            
+            // Make every word have lowercase letters.
             $resultLowerCase = array_map('strtolower', $result);
+            
             foreach ($resultLowerCase as $word) {
+                // Add the word if it is not yet added. Otherwise, increment 
+                // count by 1.
                 $words = array_column($entries, 'word');
                 $index = array_search($word, $words);
                 if($index === false) {
