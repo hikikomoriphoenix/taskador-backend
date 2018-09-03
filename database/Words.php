@@ -47,6 +47,30 @@ class Words {
         } catch (PDOException $ex) {
             throw $ex;
         }
-    }    
+    }
+    
+    /**
+     * Find words in each task. This process ensures no duplicate words are
+     * added into the returned array.
+     * 
+     * @param array $tasks an array of tasks to be parsed for words
+     * @return array an array of words in lowercase and without any special 
+     * characters except hyphen and apostrophe.
+     */
+    static function parseTasks(array $tasks) {
+        $words = array();
+        foreach ($tasks as $task) {
+            $taskString = $task['task'];
+            $taskStringClean = preg_replace("/[^\w\-\']/u", ' ', $taskString);
+            $result = preg_split("/[\s]+/", $taskStringClean);
+            $resultLowerCase = array_map('strtolower', $result);
+            foreach ($resultLowerCase as $word) {
+                if(!in_array($word, $words)) {
+                    array_push($words, $word);
+                }
+            }
+        }
+        return $words;
+    }
 }
 
