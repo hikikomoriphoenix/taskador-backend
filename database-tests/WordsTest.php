@@ -23,5 +23,19 @@ class WordsTest extends TestCase {
         
         $this->assertThat($id, $this->equalTo(9));
     }
+    
+    public function testUpdateIdOfLastParsedTask() {
+        $username = 'test1';
+        $id = 9;
+        
+        try {
+            Words::updateIdOfLastParsedTask($this->conn, $username, $id);
+            $newId = Words::getIdOfLastParsedTask($this->conn, $username);
+        } catch (Exception $ex) {
+            $this->fail($ex->getMessage());
+        }
+        
+        $this->assertThat($newId, $this->equalTo(9));
+    }
 }
 
