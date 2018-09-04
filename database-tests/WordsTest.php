@@ -37,5 +37,21 @@ class WordsTest extends TestCase {
         
         $this->assertThat($newId, $this->equalTo(9));
     }
+    
+    public function testGetUnparsedTasks() {
+        $username = 'test2';
+        
+        try {
+            $tasks = Words::getUnparsedTasks($this->conn, $username, 10);
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting unparsed tasks: ' . 
+                    $ex->getMessage());
+        }
+        
+        $this->assertThat($tasks[0]['id'], $this->equalTo(13));
+        $this->assertThat($tasks[0]['task'], $this->equalTo('task2'));
+        $this->assertThat($tasks[1]['id'], $this->equalTo(14));
+        $this->assertThat($tasks[1]['task'], $this->equalTo('task3'));
+    }
 }
 

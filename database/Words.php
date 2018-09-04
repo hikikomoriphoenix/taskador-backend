@@ -58,7 +58,7 @@ class Words {
      */
     static function getUnparsedTasks(PDO $conn, $username, $idLastParsed) {
         $selectFromAccount = 'SELECT id, task FROM Tasks_Finished WHERE username'
-                . " = $username";
+                . " = '$username'";
         $unParsed = "AND id > $idLastParsed ORDER BY id ASC";
         $select = "$selectFromAccount $unParsed;";
         
