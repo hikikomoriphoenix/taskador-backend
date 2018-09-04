@@ -24,6 +24,28 @@ class Words {
     }
     
     /**
+     * Set value for id_of_last_parsed_task of account. This helps determine
+     * which finished tasks are already parsed for words.
+     * 
+     * @param PDO $conn connection to database
+     * @param type $username account username
+     * @param type $id new value for id_of_last_parsed_task
+     * @throws PDOException
+     */
+    static function updateIdOfLastParsedTask(PDO $conn, $username, $id) {
+        $update_ = 'UPDATE Accounts';
+        $set_ = "SET id_of_last_parsed_task = $id";
+        $where_ = "WHERE username = '$username'";
+        $sql = "$update_ $set_ $where_;";
+        try {
+            $st = $conn->prepare($sql);
+            $st->execute();            
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
+    
+    /**
      * Get all finished tasks which has not yet been parsed to add its words to 
      * the list of words used for task statements or phrases.
      * 
@@ -189,6 +211,6 @@ class Words {
         } catch (PDOException $ex) {
             throw $ex;
         }
-    } 
+    }
 }
 
