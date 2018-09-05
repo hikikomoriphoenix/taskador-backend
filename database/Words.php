@@ -93,7 +93,7 @@ class Words {
             
             // Split strings separated by white spaces. Each string represents a
             // word.
-            $result = preg_split("/[\s]+/", $taskStringClean);
+            $result = preg_split("/[\s]+/", trim($taskStringClean));
             
             // Make every word have lowercase letters.
             $resultLowerCase = array_map('strtolower', $result);
