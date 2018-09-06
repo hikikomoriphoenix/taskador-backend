@@ -151,5 +151,19 @@ class WordsTest extends TestCase {
         
         $this->assertNotFalse($id);
     }
+    
+    public function testUpdateCount() {
+        $username = 'test1';
+        $id = 1;
+        $count = 2;
+        
+        try {
+            Words::updateCount($this->conn, $username, $id, $count);
+            $this->assertTrue(true);
+            // Check the Words table if the result is correct.
+        } catch (Exception $ex) {
+            $this->fail('Exception on updating count: ' . $ex->getMessage());
+        }
+    }
 }
 
