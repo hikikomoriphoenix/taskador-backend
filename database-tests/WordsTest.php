@@ -120,5 +120,21 @@ class WordsTest extends TestCase {
         
         $this->assertThat($entries3, $this->equalTo($expectedEntries3));
     }
+    
+    public function testGetWordID() {
+        $username = 'test1';
+        $word = 'buy';        
+        $nonexistentWord = 'sdfklas';
+        
+        try {
+            $id1 = Words::getWordID($this->conn, $username, $word);
+            $id2 = Words::getWordID($this->conn, $username, $nonexistentWord);
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting id for word' . $ex->getMessage());
+        }
+        
+        $this->assertThat($id1, $this->equalTo(1));
+        $this->assertThat($id2, $this->equalTo(false));
+    }
 }
 
