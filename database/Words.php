@@ -220,5 +220,30 @@ class Words {
             throw $ex;
         }
     }
+    
+    /**
+     * Get the most frequently used words in tasks.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @param int $numResults number of results to return
+     * @return array an array of elements with 'word' and 'count' fields ordered
+     * starting from the highest count value
+     * @throws PDOException
+     */
+    static function getTopWords(PDO $conn, $username, $numResults) {
+        $selectFromAccount = 'SELECT word, count FROM Words WHERE username = '
+                . "'$username'";
+        $orderBy_ = 'ORDER BY count DESC';
+        $limit_ = "LIMIT $numResults";
+        $select = "$selectFromAccount $orderBy_ $limit_;";
+        try {
+            $query = $conn->prepare($select);
+            $query->execute();
+            return $query->fetchAll();
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
 }
 
