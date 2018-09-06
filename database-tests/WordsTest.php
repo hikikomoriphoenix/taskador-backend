@@ -165,5 +165,25 @@ class WordsTest extends TestCase {
             $this->fail('Exception on updating count: ' . $ex->getMessage());
         }
     }
+    
+    public function testAddWordsToList() {
+        $username = 'test1';
+        $words = [
+            ['word' => 'buy', 'count' => 2],
+            ['word' => 'exercise', 'count' => 5],
+            ['word' => 'clean', 'count' => 7]
+        ];
+        
+        try {
+            Words::addWordsToList($this->conn, $username, $words);
+            $id1 = Words::getWordID($this->conn, $username, 'exercise');
+            $id2 = Words::getWordID($this->conn, $username, 'clean');
+        } catch (Exception $ex) {
+            $this->fail($ex->getMessage());
+        }
+        
+        $this->assertNotFalse($id1);
+        $this->assertNotFalse($id2);
+    }
 }
 
