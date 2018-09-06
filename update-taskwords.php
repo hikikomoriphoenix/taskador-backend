@@ -30,6 +30,25 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(422, 'unauthorized token');
     }
     
-    // Update entries for top words used in a task statement or phrase    
+    // Update the list of words used in tasks
+    try {
+        $idOfLastParsedTask = Words::getIdOfLastParsedTask($conn, $username);
+        $unparsedTasks = Words::getUnparsedTasks($conn, $username,
+                $idOfLastParsedTask);
+        if (!empty($unparsedTasks)) {
+            $words = Words::parseTasks($unparsedTasks);   
+            Words::addWordsToList($conn, $username, $words);
+
+            // Set the new id for last parsed task
+            $lastTaskIndex = count($unparsedTasks) - 1;
+            $newIdOfLastParsedTask = $unparsedTasks[$lastTaskIndex]['id'];                
+            Words::updateIdOfLastParsedTask($conn, $username, $idOfLastParsedTask);
+        }
+    } catch (Exception $ex) {
+        Response::errorResponse(500, 'Exception on updating words used in task:'
+                . ' ' . $ex->getMessage());        
+    }
+    
+    Response::send(array());
 }
 
