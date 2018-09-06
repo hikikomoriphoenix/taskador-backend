@@ -39,19 +39,26 @@ class WordsTest extends TestCase {
     }
     
     public function testGetUnparsedTasks() {
-        $username = 'test2';
+        $username1 = 'test2';        
+        $username2 = 'test3';
         
         try {
-            $tasks = Words::getUnparsedTasks($this->conn, $username, 10);
+            $tasks1 = Words::getUnparsedTasks($this->conn, $username1, 10);
+            $tasks2 = Words::getUnparsedTasks($this->conn, $username2, null);
         } catch (Exception $ex) {
             $this->fail('Exception on getting unparsed tasks: ' . 
                     $ex->getMessage());
         }
         
-        $this->assertThat($tasks[0]['id'], $this->equalTo(13));
-        $this->assertThat($tasks[0]['task'], $this->equalTo('task2'));
-        $this->assertThat($tasks[1]['id'], $this->equalTo(14));
-        $this->assertThat($tasks[1]['task'], $this->equalTo('task3'));
+        $this->assertThat($tasks1[0]['id'], $this->equalTo(13));
+        $this->assertThat($tasks1[0]['task'], $this->equalTo('task2'));
+        $this->assertThat($tasks1[1]['id'], $this->equalTo(14));
+        $this->assertThat($tasks1[1]['task'], $this->equalTo('task3'));  
+        
+        $this->assertThat($tasks2[0]['id'], $this->equalTo(11));    
+        $this->assertThat($tasks2[0]['task'], $this->equalTo('task1'));  
+        $this->assertThat($tasks2[1]['id'], $this->equalTo(12));  
+        $this->assertThat($tasks2[1]['task'], $this->equalTo('task2'));  
     }
     
     public function testParseTasks() {   
