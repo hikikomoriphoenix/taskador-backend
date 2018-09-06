@@ -136,5 +136,20 @@ class WordsTest extends TestCase {
         $this->assertThat($id1, $this->equalTo(1));
         $this->assertThat($id2, $this->equalTo(false));
     }
+    
+    public function testAddWordToList() {
+        $username = 'test1';
+        $word = 'watch';
+        $count = 3;
+        
+        try {
+            Words::addWordToList($this->conn, $username, $word, $count);
+            $id = Words::getWordID($this->conn, $username, $word);
+        } catch (Exception $ex) {
+            $this->fail($ex->getMessage());            
+        }
+        
+        $this->assertNotFalse($id);
+    }
 }
 
