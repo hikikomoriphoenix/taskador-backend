@@ -129,7 +129,8 @@ class Words {
             foreach ($words as $word) {
                 $wordId = self::getWordID($conn, $username, $word['word']);
                 if ($wordId === false) {
-                    self::addWordToList($conn, $username, $word['word']);
+                    self::addWordToList($conn, $username, $word['word'], 
+                            $word['count']);
                 } else {
                     self::updateCount($conn, $username, $wordId,
                             $word['count']);
@@ -172,9 +173,10 @@ class Words {
      * @param PDO $conn connection to database
      * @param string $username account username
      * @param string $word word to add
+     * @param id $count number of times the word was used
      * @throws PDOException
      */
-    static function addWordToList(PDO $conn, $username, $word) {
+    static function addWordToList(PDO $conn, $username, $word, $count) {
         $insert = 'INSERT INTO Words';
         $params = 'id, username, word, count';
         $sql = "$insert ($params) VALUES (?, ?, ?, ?);";
@@ -183,7 +185,7 @@ class Words {
             $st->bindValue(1, null);
             $st->bindValue(2, $username);
             $st->bindValue(3, $word);
-            $st->bindValue(4, 1);
+            $st->bindValue(4, $count);
             $st->execute();
         } catch (PDOException $ex) {
             throw $ex;
