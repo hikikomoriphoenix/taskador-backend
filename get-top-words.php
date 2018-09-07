@@ -42,4 +42,13 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
     
     // Get top words from Words table
+    try {
+        $topWords = Words::getTopWords($conn, $username, $numResults);
+    } catch (Exception $ex) {
+        Response::errorResponse(500, 'Exception on getting top words: ' . 
+                $ex->getMessage());
+    }
+    
+    $response = [ 'top_words' => $topWords];
+    Response::send($response);
 }
