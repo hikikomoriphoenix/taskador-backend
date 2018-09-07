@@ -240,7 +240,7 @@ class Words {
         try {
             $query = $conn->prepare($select);
             $query->execute();
-            return $query->fetchAll();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $ex) {
             throw $ex;
         }

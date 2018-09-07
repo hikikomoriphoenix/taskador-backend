@@ -192,5 +192,26 @@ class WordsTest extends TestCase {
         $this->assertNotFalse($id1);
         $this->assertNotFalse($id2);
     }
+    
+    public function testGetTopWords() {
+        $username = 'test2';
+        $numResults = 5;
+        
+        try {
+            $topWords = Words::getTopWords($this->conn, $username, $numResults);
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting top words: ' . $ex->getMessage());
+        }
+        
+        $expectedTopWords = [
+            ['word' => 'practice', 'count' => '67'],
+            ['word' => 'clean', 'count' => '44'],
+            ['word' => 'watch', 'count' => '32'],
+            ['word' => 'buy', 'count' => '25'],
+            ['word' => 'write', 'count' => '21']
+        ];
+        
+        $this->assertThat($topWords, $this->equalTo($expectedTopWords));
+    }
 }
 
