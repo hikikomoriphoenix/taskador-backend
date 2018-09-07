@@ -213,5 +213,21 @@ class WordsTest extends TestCase {
         
         $this->assertThat($topWords, $this->equalTo($expectedTopWords));
     }
+    
+    public function testSetExcluded() {
+        $username = 'test1';
+        $word = 'buy';
+        $excluded = 1;
+        //$excluded = 0;
+        
+        try {
+            Words::setExcluded($this->conn, $username, $word, $excluded);
+            $this->assertTrue(true);
+            // Check the value in table.
+        } catch (Exception $ex) {
+            $this->fail("Exception on setting a word's excluded value: " . 
+                    $ex->getMessage());
+        }
+    }
 }
 
