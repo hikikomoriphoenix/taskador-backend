@@ -43,6 +43,14 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(422, 'unauthorized token');
     }
     
-    // Set a selected as excluded or not excluded in top words    
+    // Set a selected word as excluded or not excluded in top words    
+    try {
+        Words::setExcluded($conn, $username, $word, $excluded);
+    } catch (Exception $ex) {
+        Response::errorResponse(500, "Exception on setting the word's excluded"
+                . " value: " . $ex->getMessage());
+    }
+    
+    Response::send(array());
 }
 
