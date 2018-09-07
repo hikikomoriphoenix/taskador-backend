@@ -40,7 +40,7 @@ class Tasks {
         try {
             $query = $conn->prepare($select);
             $query->execute();
-            $tasks = $query->fetchAll();
+            $tasks = $query->fetchAll(PDO::FETCH_ASSOC);
             return $tasks;
         } catch (PDOException $ex) {
             throw $ex;
@@ -142,7 +142,7 @@ class Tasks {
         try {
             $query = $conn->prepare($select);
             $query->execute();
-            $tasks = $query->fetchAll();
+            $tasks = $query->fetchAll(PDO::FETCH_ASSOC);
             return $tasks;
         } catch (PDOException $ex) {
             throw $ex;
