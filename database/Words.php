@@ -245,5 +245,33 @@ class Words {
             throw $ex;
         }
     }
+    
+    /**
+     * Set a word to be excluded or not excluded from top words.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @param string $word selected word
+     * @param boolean $excluded a true value if word is to be set as excluded. A
+     * false value otherwise.
+     * @throws PDOException
+     */
+    static function setExcluded(PDO $conn, $username, $word, $excluded) {
+        $update_ = 'UPDATE Words';
+        if ($excluded != false) {
+            $excluded = 1;
+        } else {
+            $excluded = 0;
+        }
+        $set_ = "SET excluded = $excluded";
+        $where_ = "WHERE username = '$username' AND word = '$word'";
+        $sql = "$update_ $set_ $where_;";
+        try {
+            $st = $conn->prepare($sql);
+            $st->execute();
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
 }
 
