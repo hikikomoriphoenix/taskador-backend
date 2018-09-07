@@ -234,9 +234,10 @@ class Words {
     static function getTopWords(PDO $conn, $username, $numResults) {
         $selectFromAccount = 'SELECT word, count FROM Words WHERE username = '
                 . "'$username'";
+        $excluded = 'AND excluded = 0';
         $orderBy_ = 'ORDER BY count DESC';
         $limit_ = "LIMIT $numResults";
-        $select = "$selectFromAccount $orderBy_ $limit_;";
+        $select = "$selectFromAccount $excluded $orderBy_ $limit_;";
         try {
             $query = $conn->prepare($select);
             $query->execute();

@@ -205,10 +205,10 @@ class WordsTest extends TestCase {
         
         $expectedTopWords = [
             ['word' => 'practice', 'count' => '67'],
-            ['word' => 'clean', 'count' => '44'],
             ['word' => 'watch', 'count' => '32'],
             ['word' => 'buy', 'count' => '25'],
-            ['word' => 'write', 'count' => '21']
+            ['word' => 'write', 'count' => '21'],
+            ['word' => 'hangout', 'count' => '18']
         ];
         
         $this->assertThat($topWords, $this->equalTo($expectedTopWords));
