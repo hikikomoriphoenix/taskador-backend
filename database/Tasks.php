@@ -147,6 +147,5 @@ class Tasks {
         } catch (PDOException $ex) {
             throw $ex;
         }        
-    }
+    }  
 }
-
