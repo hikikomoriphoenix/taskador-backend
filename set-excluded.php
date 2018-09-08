@@ -3,7 +3,8 @@ require_once 'autoload.php';
 
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // Get inputs
-    $input = filter_input(INPUT_POST, 'input');
+    /* @var $input string */
+    $input = file_get_contents('php://input');
     if (empty($input)) {
         Response::errorResponse(400, 'Request has no input');
     }    
