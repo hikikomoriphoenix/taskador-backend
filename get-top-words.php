@@ -1,6 +1,48 @@
 <?php
 require_once 'autoload.php';
 
+/**
+ * Endpoint for getting words most frequently used in tasks. Words are ordered
+ * starting from the word with most counts. Words that are set to be excluded
+ * from top words are not included in the results. It is recommended that the 
+ * Words table be updated, by calling the update-taskwords endpoint, before
+ * calling this one. 
+ * 
+ * Requirements for request:
+ * - Must be a POST request
+ * - Content-Type = application/json
+ * - JSON structure:
+ *      <pre><code>
+ *      {
+ *          "username":<username of account>,
+ *          "token":<token for authorization>,
+ *          "number_of_results":<expected number of results>
+ *      }
+ *      </code></pre>
+ * 
+ * Response:
+ * - Content-type = application/json
+ * - On success:
+ *      - Status code = 200
+ *      - JSON structure:
+ *          <pre><code>
+ *          {
+ *              "top_words":[
+ *                  {"word":<top word>, "count":<times used in tasks>},
+ *                  {"word":<second top word>, "count":<times used in tasks>},
+ *                  ...
+ *              ]
+ *          }
+ * - On error:
+ *      - Status code = 500, 400, or 422
+ *      - JSON structure
+ *          <pre><code>
+ *          {
+ *              "message":<Error message>
+ *          }
+ *          </code></pre>             
+ */
+
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // Get inputs
     /* @var $input string */

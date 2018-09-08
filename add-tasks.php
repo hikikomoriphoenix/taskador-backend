@@ -1,6 +1,43 @@
 <?php
 require_once 'autoload.php';
 
+/**
+ * Endpoint for adding to-do tasks to an account. 
+ * 
+ * Requirements for request:
+ * - Must be a POST request
+ * - Content-Type = application/json
+ * - JSON structure:
+ *      <pre><code>
+ *      {
+ *          "username":<Username of account>,
+ *          "token":<Token for authorization>,
+ *          "tasks":[
+ *              <A task>,
+ *              <Another task>,
+ *              ...
+ *          ]
+ *      }   
+ *      </code></pre>
+ *   
+ * Response:   
+ * - Content-Type = application/json
+ * - On success:
+ *      - Status code = 200
+ *      - JSON structure:
+ *          <pre><code>
+ *          {}
+ *          </code></pre>
+ * - On error:
+ *      - Status code = 500, 400, or 422
+ *      - JSON structure:
+ *          <pre><code>
+ *          {
+ *              "message":<Error message>
+ *          }
+ *          </code></pre>
+ */
+
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // Get inputs
     /* @var $input string */

@@ -1,6 +1,45 @@
 <?php
 require_once 'autoload.php';
 
+/**
+ * Endpoint for setting given tasks as finished. These tasks will be stored in
+ * the account along with other previously finished tasks and will
+ * correspondingly be removed from among the to-do tasks . 
+ * 
+ * Requirements for request:
+ * - Must be a POST request
+ * - Content-Type = application/json
+ * - JSON structure:
+ *      <pre><code>
+ *      {
+ *          "username":<Username of account>
+ *          "token":<Token for authorization>
+ *          "tasks":[
+ *              <A finished task>,
+ *              <Another finished task>
+ *              ...
+ *          ]
+ *      }
+ *      </code></pre>
+ * 
+ * Response:
+ * - Content-type = application/json
+ * - On success:
+ *      - Status code = 200
+ *      - JSON structure
+ *          <pre><code>
+ *          {}
+ *          </code></pre>
+ * - On error:
+ *      - Status code = 500, 400, or 422
+ *      - JSON structure
+ *          <pre><code>
+ *          {
+ *              "message":<Error message>
+ *          }
+ *          </code></pre>
+ */
+
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // Get inputs
     /* @var $input string */

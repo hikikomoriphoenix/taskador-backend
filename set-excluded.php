@@ -1,6 +1,40 @@
 <?php
 require_once 'autoload.php';
 
+/**
+ * Endpoint for setting a word as excluded or not excluded from top words.
+ * 
+ * Requirements for request:
+ * - Must be a POST request
+ * - Content-Type = application/json
+ * - JSON structure:
+ *      <pre><code>
+ *      {
+ *          "username":<username of account>
+ *          "token":<token for authorization>
+ *          "word":<selected word>
+ *          "excluded":<1 if excluded, 0 if not excluded>
+ *      }
+ *      </code></pre>
+ * 
+ * Response:   
+ * - Content-Type = application/json
+ * - On success:
+ *      - Status code = 200
+ *      - JSON structure:
+ *          <pre><code>
+ *          {}
+ *          </code></pre>
+ * - On error:
+ *      - Status code = 500, 400, or 422
+ *      - JSON structure:
+ *          <pre><code>
+ *          {
+ *              "message":<Error message>
+ *          }
+ *          </code></pre>
+ */
+
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // Get inputs
     /* @var $input string */
