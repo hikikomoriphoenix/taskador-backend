@@ -274,5 +274,28 @@ class Words {
             throw $ex;
         }
     }
+   
+    /**
+     * Get words that are set as excluded from top words.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @return array an array containing excluded words in alphabetical order
+     * @throws PDOException
+     */
+    static function getExcludedWords(PDO $conn, $username) {
+        $selectFromAccount = 'SELECT word FROM Words WHERE username = '
+                . "'$username'";
+        $excluded = 'AND excluded = 1';
+        $orderBy_ = 'ORDER BY word ASC';
+        $select = "$selectFromAccount $excluded $orderBy_;";
+        try {
+            $query = $conn->prepare($select);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_COLUMN, 0);
+        } catch (PDOException $ex) {
+            throw $ex;
+        }        
+    }
 }
 
