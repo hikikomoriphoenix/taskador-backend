@@ -234,9 +234,10 @@ class Words {
     static function getTopWords(PDO $conn, $username, $numResults) {
         $selectFromAccount = 'SELECT word, count FROM Words WHERE username = '
                 . "'$username'";
+        $excluded = 'AND excluded = 0';
         $orderBy_ = 'ORDER BY count DESC';
         $limit_ = "LIMIT $numResults";
-        $select = "$selectFromAccount $orderBy_ $limit_;";
+        $select = "$selectFromAccount $excluded $orderBy_ $limit_;";
         try {
             $query = $conn->prepare($select);
             $query->execute();
@@ -244,6 +245,57 @@ class Words {
         } catch (PDOException $ex) {
             throw $ex;
         }
+    }
+    
+    /**
+     * Set a word to be excluded or not excluded from top words.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @param string $word selected word
+     * @param boolean $excluded a true value if word is to be set as excluded. A
+     * false value otherwise.
+     * @throws PDOException
+     */
+    static function setExcluded(PDO $conn, $username, $word, $excluded) {
+        $update_ = 'UPDATE Words';
+        if ($excluded != false) {
+            $excluded = 1;
+        } else {
+            $excluded = 0;
+        }
+        $set_ = "SET excluded = $excluded";
+        $where_ = "WHERE username = '$username' AND word = '$word'";
+        $sql = "$update_ $set_ $where_;";
+        try {
+            $st = $conn->prepare($sql);
+            $st->execute();
+        } catch (PDOException $ex) {
+            throw $ex;
+        }
+    }
+   
+    /**
+     * Get words that are set as excluded from top words.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @return array an array containing excluded words in alphabetical order
+     * @throws PDOException
+     */
+    static function getExcludedWords(PDO $conn, $username) {
+        $selectFromAccount = 'SELECT word FROM Words WHERE username = '
+                . "'$username'";
+        $excluded = 'AND excluded = 1';
+        $orderBy_ = 'ORDER BY word ASC';
+        $select = "$selectFromAccount $excluded $orderBy_;";
+        try {
+            $query = $conn->prepare($select);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_COLUMN, 0);
+        } catch (PDOException $ex) {
+            throw $ex;
+        }        
     }
 }
 

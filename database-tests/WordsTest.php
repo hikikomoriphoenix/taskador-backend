@@ -205,13 +205,44 @@ class WordsTest extends TestCase {
         
         $expectedTopWords = [
             ['word' => 'practice', 'count' => '67'],
-            ['word' => 'clean', 'count' => '44'],
             ['word' => 'watch', 'count' => '32'],
             ['word' => 'buy', 'count' => '25'],
-            ['word' => 'write', 'count' => '21']
+            ['word' => 'write', 'count' => '21'],
+            ['word' => 'hangout', 'count' => '18']
         ];
         
         $this->assertThat($topWords, $this->equalTo($expectedTopWords));
+    }
+    
+    public function testSetExcluded() {
+        $username = 'test1';
+        $word = 'buy';
+        $excluded = 1;
+        //$excluded = 0;
+        
+        try {
+            Words::setExcluded($this->conn, $username, $word, $excluded);
+            $this->assertTrue(true);
+            // Check the value in table.
+        } catch (Exception $ex) {
+            $this->fail("Exception on setting a word's excluded value: " . 
+                    $ex->getMessage());
+        }
+    }
+    
+    public function testGetExcludedWords() {
+        $username = 'test3';
+        
+        try {
+            $words = Words::getExcludedWords($this->conn, $username);
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting excluded words: ' . 
+                    $ex->getMessage());
+        }
+        
+        $expectedWords = ['eat', 'fight', 'hunt'];
+        
+        $this->assertThat($words, $this->equalTo($expectedWords));
     }
 }
 
