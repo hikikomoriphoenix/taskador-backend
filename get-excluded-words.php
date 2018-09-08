@@ -31,5 +31,14 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
     
     // Get words that are set as excluded    
+    try {
+        $words = Words::getExcludedWords($conn, $username);
+    } catch (Exception $ex) {
+        Response::errorResponse(500, 'Exception on getting excluded words: '
+                . $ex->getMessage());
+    }
+    
+    $response = ['words' => $words];
+    Response::send($response);    
 }
 
