@@ -229,5 +229,20 @@ class WordsTest extends TestCase {
                     $ex->getMessage());
         }
     }
+    
+    public function testGetExcludedWords() {
+        $username = 'test3';
+        
+        try {
+            $words = Words::getExcludedWords($this->conn, $username);
+        } catch (Exception $ex) {
+            $this->fail('Exception on getting excluded words: ' . 
+                    $ex->getMessage());
+        }
+        
+        $expectedWords = ['eat', 'fight', 'hunt'];
+        
+        $this->assertThat($words, $this->equalTo($expectedWords));
+    }
 }
 
