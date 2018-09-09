@@ -116,16 +116,18 @@ class Tasks {
     }
     
     /**
-     * Get all tasks finished within the current week.
+     * Get all tasks finished within the current week. The date the task was 
+     * finished is also returned along with the task itself.
      * 
      * @param PDO $conn connection to database
      * @param string $username account username
-     * @return array an array of objects with a field named 'task'
+     * @return array an array of objects with fields named 'task' and 
+     * 'date_finished\'
      * @throws PDOException
      */
     static function getFinishedTasks(PDO $conn, $username) {        
-        $selectFromAccount = "SELECT task FROM Tasks_Finished WHERE username = "
-                . "'$username'";
+        $selectFromAccount = "SELECT task, date_finished FROM Tasks_Finished "
+                . "WHERE username = '$username'";
         
         // Get the date range of the current week
         $day = date('w');
