@@ -34,7 +34,7 @@ require_once '../autoload.php';
  *              ]
  *          }
  * - On error:
- *      - Status code = 500, 400, or 422
+ *      - Status code = 500, 400, 422, or 405
  *      - JSON structure
  *          <pre><code>
  *          {
@@ -94,4 +94,6 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     
     $response = [ 'top_words' => $topWords];
     Response::send($response);
+} else {
+    Response::errorResponse(405, 'Method is not POST');
 }

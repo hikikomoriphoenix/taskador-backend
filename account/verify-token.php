@@ -21,7 +21,7 @@ require_once '../autoload.php';
  *          {}
  *          </code></pre>
  * - On error:
- *      - Status code = 500, 400, or 422
+ *      - Status code = 500, 400, 422, or 405
  *      - JSON structure:
  *          <pre><code>
  *          {
@@ -58,4 +58,6 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     } else {
         Response::errorResponse(422, 'Submitted token is not correct.');
     }
+} else {
+    Response::errorResponse(405, 'Method is not POST');
 }
