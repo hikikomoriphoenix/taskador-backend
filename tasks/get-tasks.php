@@ -1,5 +1,5 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
  * Endpoint for getting to-do tasks from account.

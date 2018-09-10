@@ -1,12 +1,8 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
- * Endpoint for getting words most frequently used in tasks. Words are ordered
- * starting from the word with most counts. Words that are set to be excluded
- * from top words are not included in the results. It is recommended that the 
- * Words table be updated, by calling the update-taskwords endpoint, before
- * calling this one. 
+ * Endpoint for setting a word as excluded or not excluded from top words.
  * 
  * Requirements for request:
  * - Must be a POST request
@@ -14,33 +10,29 @@ require_once 'autoload.php';
  * - JSON structure:
  *      <pre><code>
  *      {
- *          "username":<username of account>,
- *          "token":<token for authorization>,
- *          "number_of_results":<expected number of results>
+ *          "username":<username of account>
+ *          "token":<token for authorization>
+ *          "word":<selected word>
+ *          "excluded":<1 if excluded, 0 if not excluded>
  *      }
  *      </code></pre>
  * 
- * Response:
- * - Content-type = application/json
+ * Response:   
+ * - Content-Type = application/json
  * - On success:
  *      - Status code = 200
  *      - JSON structure:
  *          <pre><code>
- *          {
- *              "top_words":[
- *                  {"word":<top word>, "count":<times used in tasks>},
- *                  {"word":<second top word>, "count":<times used in tasks>},
- *                  ...
- *              ]
- *          }
+ *          {}
+ *          </code></pre>
  * - On error:
  *      - Status code = 500, 400, or 422
- *      - JSON structure
+ *      - JSON structure:
  *          <pre><code>
  *          {
  *              "message":<Error message>
  *          }
- *          </code></pre>             
+ *          </code></pre>
  */
 
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
@@ -55,9 +47,11 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     /* @var $username string */
     $username = $inputData['username'];
     /* @var $token string */
-    $token = $inputData['token'];    
-    /* @var $numResults int */
-    $numResults = $input['number_of_results'];
+    $token = $inputData['token'];
+    /* @var $word string */
+    $word = $inputData['word'];
+    /* @var $excluded bool */
+    $excluded = $inputData['excluded'];
    
     // Connect to database
     try {
@@ -84,14 +78,14 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(422, 'unauthorized token');
     }
     
-    // Get top words from Words table
+    // Set a selected word as excluded or not excluded in top words    
     try {
-        $topWords = Words::getTopWords($conn, $username, $numResults);
+        Words::setExcluded($conn, $username, $word, $excluded);
     } catch (Exception $ex) {
-        Response::errorResponse(500, 'Exception on getting top words: ' . 
-                $ex->getMessage());
+        Response::errorResponse(500, "Exception on setting the word's excluded"
+                . " value: " . $ex->getMessage());
     }
     
-    $response = [ 'top_words' => $topWords];
-    Response::send($response);
+    Response::send(array());
 }
+

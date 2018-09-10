@@ -1,8 +1,8 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
- * Endpoint for setting a word as excluded or not excluded from top words.
+ * Endpoint for adding to-do tasks to an account. 
  * 
  * Requirements for request:
  * - Must be a POST request
@@ -10,13 +10,16 @@ require_once 'autoload.php';
  * - JSON structure:
  *      <pre><code>
  *      {
- *          "username":<username of account>
- *          "token":<token for authorization>
- *          "word":<selected word>
- *          "excluded":<1 if excluded, 0 if not excluded>
- *      }
+ *          "username":<Username of account>,
+ *          "token":<Token for authorization>,
+ *          "tasks":[
+ *              <A task>,
+ *              <Another task>,
+ *              ...
+ *          ]
+ *      }   
  *      </code></pre>
- * 
+ *   
  * Response:   
  * - Content-Type = application/json
  * - On success:
@@ -48,10 +51,8 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     $username = $inputData['username'];
     /* @var $token string */
     $token = $inputData['token'];
-    /* @var $word string */
-    $word = $inputData['word'];
-    /* @var $excluded bool */
-    $excluded = $inputData['excluded'];
+    /* @var $tasks array */
+    $tasks = $inputData['tasks'];
    
     // Connect to database
     try {
@@ -78,14 +79,11 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(422, 'unauthorized token');
     }
     
-    // Set a selected word as excluded or not excluded in top words    
+    // Insert tasks to database    
     try {
-        Words::setExcluded($conn, $username, $word, $excluded);
+        Tasks::addTasks($conn, $username, $tasks);
+        Response::send(array());
     } catch (Exception $ex) {
-        Response::errorResponse(500, "Exception on setting the word's excluded"
-                . " value: " . $ex->getMessage());
+        Response::errorResponse(500, $ex->getMessage());
     }
-    
-    Response::send(array());
 }
-

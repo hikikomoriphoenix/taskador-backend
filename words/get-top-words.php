@@ -1,8 +1,12 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
- * Endpoint for adding to-do tasks to an account. 
+ * Endpoint for getting words most frequently used in tasks. Words are ordered
+ * starting from the word with most counts. Words that are set to be excluded
+ * from top words are not included in the results. It is recommended that the 
+ * Words table be updated, by calling the update-taskwords endpoint, before
+ * calling this one. 
  * 
  * Requirements for request:
  * - Must be a POST request
@@ -10,32 +14,33 @@ require_once 'autoload.php';
  * - JSON structure:
  *      <pre><code>
  *      {
- *          "username":<Username of account>,
- *          "token":<Token for authorization>,
- *          "tasks":[
- *              <A task>,
- *              <Another task>,
- *              ...
- *          ]
- *      }   
+ *          "username":<username of account>,
+ *          "token":<token for authorization>,
+ *          "number_of_results":<expected number of results>
+ *      }
  *      </code></pre>
- *   
- * Response:   
- * - Content-Type = application/json
+ * 
+ * Response:
+ * - Content-type = application/json
  * - On success:
  *      - Status code = 200
  *      - JSON structure:
  *          <pre><code>
- *          {}
- *          </code></pre>
+ *          {
+ *              "top_words":[
+ *                  {"word":<top word>, "count":<times used in tasks>},
+ *                  {"word":<second top word>, "count":<times used in tasks>},
+ *                  ...
+ *              ]
+ *          }
  * - On error:
  *      - Status code = 500, 400, or 422
- *      - JSON structure:
+ *      - JSON structure
  *          <pre><code>
  *          {
  *              "message":<Error message>
  *          }
- *          </code></pre>
+ *          </code></pre>             
  */
 
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
@@ -50,9 +55,9 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     /* @var $username string */
     $username = $inputData['username'];
     /* @var $token string */
-    $token = $inputData['token'];
-    /* @var $tasks array */
-    $tasks = $inputData['tasks'];
+    $token = $inputData['token'];    
+    /* @var $numResults int */
+    $numResults = $input['number_of_results'];
    
     // Connect to database
     try {
@@ -79,11 +84,14 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(422, 'unauthorized token');
     }
     
-    // Insert tasks to database    
+    // Get top words from Words table
     try {
-        Tasks::addTasks($conn, $username, $tasks);
-        Response::send(array());
+        $topWords = Words::getTopWords($conn, $username, $numResults);
     } catch (Exception $ex) {
-        Response::errorResponse(500, $ex->getMessage());
+        Response::errorResponse(500, 'Exception on getting top words: ' . 
+                $ex->getMessage());
     }
+    
+    $response = [ 'top_words' => $topWords];
+    Response::send($response);
 }

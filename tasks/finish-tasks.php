@@ -1,5 +1,5 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
  * Endpoint for setting given tasks as finished. These tasks will be stored in

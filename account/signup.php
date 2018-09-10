@@ -1,5 +1,5 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
  * Endpoint for registering a new account. A successful sign-up will return a 

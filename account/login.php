@@ -1,5 +1,5 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
  * Endpoint for logging in to account. A successful login will return a token 

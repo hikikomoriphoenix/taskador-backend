@@ -1,5 +1,5 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
  * Endpoint for simply verifying a token's authorization. If the token is not

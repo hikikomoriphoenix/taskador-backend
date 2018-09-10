@@ -1,9 +1,14 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
- * Endpoint for getting tasks finished during the current week. The response 
- * will include the date finished along with each corresponding finished tasks. 
+ * Endpoint for updating the Words table for entries of a given account. The 
+ * Words table contains words used in naming tasks. It also tracks how
+ * frequently a word is used. In this process, recently finished tasks will be
+ * parsed to get each word. New words will be added to the table, while existing
+ * ones will be updated for its count. After which, The id of the last task will
+ * be saved and the next call to this endpoint will start from the task 
+ * following the task of this id.
  * 
  * Requirements for request:
  * - Must be a POST request
@@ -11,23 +16,16 @@ require_once 'autoload.php';
  * - Form contains a 'username' field for account's username
  * - Form contains a 'token' field for token used in authorization
  * 
- * Response:
+ * Response:   
  * - Content-Type = application/json
  * - On success:
  *      - Status code = 200
  *      - JSON structure:
  *          <pre><code>
- *          {
- *              "tasks":[
- *                  {"task":<A finished task>, "date_finished":<Date finished>},
- *                  {"task":<Another finished task>, "date_finished":
- *                      <Date finished>},
- *                  ...
- *              ]
- *          }
+ *          {}
  *          </code></pre>
  * - On error:
- *      - Status code = 500, 400, 422
+ *      - Status code = 500, 400, or 422
  *      - JSON structure:
  *          <pre><code>
  *          {
@@ -35,7 +33,6 @@ require_once 'autoload.php';
  *          }
  *          </code></pre>
  */
-
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     $username = filter_input(INPUT_POST, 'username');
     $token = filter_input(INPUT_POST, 'token');
@@ -65,13 +62,25 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(422, 'unauthorized token');
     }
     
-    // Query for finished tasks
+    // Update the list of words used in tasks
     try {
-        $tasks = Tasks::getFinishedTasks($conn, $username);
-        $response = ['tasks' => $tasks];
-        Response::send($response);
+        $idOfLastParsedTask = Words::getIdOfLastParsedTask($conn, $username);
+        $unparsedTasks = Words::getUnparsedTasks($conn, $username,
+                $idOfLastParsedTask);
+        if (!empty($unparsedTasks)) {
+            $words = Words::parseTasks($unparsedTasks);   
+            Words::addWordsToList($conn, $username, $words);
+
+            // Set the new id for last parsed task
+            $lastTaskIndex = count($unparsedTasks) - 1;
+            $newIdOfLastParsedTask = $unparsedTasks[$lastTaskIndex]['id'];                
+            Words::updateIdOfLastParsedTask($conn, $username, $idOfLastParsedTask);
+        }
     } catch (Exception $ex) {
-        Response::errorResponse(500, 'Exception on getting finished tasks' . 
-                $ex->getMessage());
-    }    
+        Response::errorResponse(500, 'Exception on updating words used in task:'
+                . ' ' . $ex->getMessage());        
+    }
+    
+    Response::send(array());
 }
+

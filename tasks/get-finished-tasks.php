@@ -1,9 +1,9 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
 /**
- * Endpoint for getting words set to be excluded from top words. These words
- * will be in alphabetical order.
+ * Endpoint for getting tasks finished during the current week. The response 
+ * will include the date finished along with each corresponding finished tasks. 
  * 
  * Requirements for request:
  * - Must be a POST request
@@ -18,9 +18,10 @@ require_once 'autoload.php';
  *      - JSON structure:
  *          <pre><code>
  *          {
- *              "words":[
- *                  <An excluded word>,
- *                  <Another excluded word>
+ *              "tasks":[
+ *                  {"task":<A finished task>, "date_finished":<Date finished>},
+ *                  {"task":<Another finished task>, "date_finished":
+ *                      <Date finished>},
  *                  ...
  *              ]
  *          }
@@ -64,15 +65,13 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(422, 'unauthorized token');
     }
     
-    // Get words that are set as excluded    
+    // Query for finished tasks
     try {
-        $words = Words::getExcludedWords($conn, $username);
+        $tasks = Tasks::getFinishedTasks($conn, $username);
+        $response = ['tasks' => $tasks];
+        Response::send($response);
     } catch (Exception $ex) {
-        Response::errorResponse(500, 'Exception on getting excluded words: '
-                . $ex->getMessage());
-    }
-    
-    $response = ['words' => $words];
-    Response::send($response);    
+        Response::errorResponse(500, 'Exception on getting finished tasks' . 
+                $ex->getMessage());
+    }    
 }
-
