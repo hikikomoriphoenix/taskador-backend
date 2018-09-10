@@ -1,5 +1,40 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
+
+/**
+ * Endpoint for getting tasks finished during the current week. The response 
+ * will include the date finished along with each corresponding finished tasks. 
+ * 
+ * Requirements for request:
+ * - Must be a POST request
+ * - Content-Type = application/x-www-form-urlencoded or multipart/form-data
+ * - Form contains a 'username' field for account's username
+ * - Form contains a 'token' field for token used in authorization
+ * 
+ * Response:
+ * - Content-Type = application/json
+ * - On success:
+ *      - Status code = 200
+ *      - JSON structure:
+ *          <pre><code>
+ *          {
+ *              "tasks":[
+ *                  {"task":<A finished task>, "date_finished":<Date finished>},
+ *                  {"task":<Another finished task>, "date_finished":
+ *                      <Date finished>},
+ *                  ...
+ *              ]
+ *          }
+ *          </code></pre>
+ * - On error:
+ *      - Status code = 500, 400, 422, or 405
+ *      - JSON structure:
+ *          <pre><code>
+ *          {
+ *              "message":<Error message>
+ *          }
+ *          </code></pre>
+ */
 
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     $username = filter_input(INPUT_POST, 'username');
@@ -39,4 +74,6 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(500, 'Exception on getting finished tasks' . 
                 $ex->getMessage());
     }    
+} else {
+    Response::errorResponse(405, 'Method is not POST');
 }

@@ -1,5 +1,34 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
+
+/**
+ * Endpoint for simply verifying a token's authorization. If the token is not
+ * verified to be authorized, then the user needs to login using the account's
+ * password to get a new fresh token.
+ * 
+ * Requirements for request:
+ * - Must be a POST request
+ * - Content-Type = application/x-www-form-urlencoded or multipart/form-data
+ * - Form contains a 'username' field for account's username
+ * - Form contains a 'token' field for the token to be verified
+ * 
+ * Response:   
+ * - Content-Type = application/json
+ * - On success:
+ *      - Status code = 200
+ *      - JSON structure:
+ *          <pre><code>
+ *          {}
+ *          </code></pre>
+ * - On error:
+ *      - Status code = 500, 400, 422, or 405
+ *      - JSON structure:
+ *          <pre><code>
+ *          {
+ *              "message":<Error message>
+ *          }
+ *          </code></pre>
+ */
 
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     $username = filter_input(INPUT_POST, 'username');
@@ -29,4 +58,6 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     } else {
         Response::errorResponse(422, 'Submitted token is not correct.');
     }
+} else {
+    Response::errorResponse(405, 'Method is not POST');
 }

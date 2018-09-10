@@ -1,6 +1,38 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
 
+/**
+ * Endpoint for updating the Words table for entries of a given account. The 
+ * Words table contains words used in naming tasks. It also tracks how
+ * frequently a word is used. In this process, recently finished tasks will be
+ * parsed to get each word. New words will be added to the table, while existing
+ * ones will be updated for its count. After which, The id of the last task will
+ * be saved and the next call to this endpoint will start from the task 
+ * following the task of this id.
+ * 
+ * Requirements for request:
+ * - Must be a POST request
+ * - Content-Type = application/x-www-form-urlencoded or multipart/form-data
+ * - Form contains a 'username' field for account's username
+ * - Form contains a 'token' field for token used in authorization
+ * 
+ * Response:   
+ * - Content-Type = application/json
+ * - On success:
+ *      - Status code = 200
+ *      - JSON structure:
+ *          <pre><code>
+ *          {}
+ *          </code></pre>
+ * - On error:
+ *      - Status code = 500, 400, 422, or 405
+ *      - JSON structure:
+ *          <pre><code>
+ *          {
+ *              "message":<Error message>
+ *          }
+ *          </code></pre>
+ */
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     $username = filter_input(INPUT_POST, 'username');
     $token = filter_input(INPUT_POST, 'token');
@@ -50,5 +82,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
     
     Response::send(array());
+} else {
+    Response::errorResponse(405, 'Method is not POST');
 }
 

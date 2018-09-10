@@ -1,5 +1,42 @@
 <?php
-require_once 'autoload.php';
+require_once '../autoload.php';
+
+/**
+ * Endpoint for adding to-do tasks to an account. 
+ * 
+ * Requirements for request:
+ * - Must be a POST request
+ * - Content-Type = application/json
+ * - JSON structure:
+ *      <pre><code>
+ *      {
+ *          "username":<Username of account>,
+ *          "token":<Token for authorization>,
+ *          "tasks":[
+ *              <A task>,
+ *              <Another task>,
+ *              ...
+ *          ]
+ *      }   
+ *      </code></pre>
+ *   
+ * Response:   
+ * - Content-Type = application/json
+ * - On success:
+ *      - Status code = 200
+ *      - JSON structure:
+ *          <pre><code>
+ *          {}
+ *          </code></pre>
+ * - On error:
+ *      - Status code = 500, 400, 422, or 405
+ *      - JSON structure:
+ *          <pre><code>
+ *          {
+ *              "message":<Error message>
+ *          }
+ *          </code></pre>
+ */
 
 if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     // Get inputs
@@ -42,22 +79,13 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(422, 'unauthorized token');
     }
     
-    // Save finished tasks to Tasks_Finished table
+    // Insert tasks to database    
     try {
-        Tasks::saveFinishedTasks($conn, $username, $tasks);
+        Tasks::addTasks($conn, $username, $tasks);
+        Response::send(array());
     } catch (Exception $ex) {
-        Response::errorResponse(500, 'Exception on saving finished tasks: ' . 
-                $ex->getMessage());
+        Response::errorResponse(500, $ex->getMessage());
     }
-    
-    // Remove finished tasks from Tasks_ToDo table
-    try {
-        Tasks::deleteTasks($conn, $username, $tasks);
-    } catch (Exception $ex) {
-        Response::errorResponse(500, 'Exception on deleting finished tasks: ' .
-                $ex->getMessage());
-    }
-    
-    Response::send(array());
+} else {
+    Response::errorResponse(405, 'Method is not POST');
 }
-
