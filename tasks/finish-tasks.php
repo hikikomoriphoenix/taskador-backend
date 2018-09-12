@@ -48,7 +48,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
         Response::errorResponse(400, 'Request has no input');
     }    
     /* @var $inputData array */
-    $inputData = json_decode($input);
+    $inputData = json_decode($input, true);
     /* @var $username string */
     $username = $inputData['username'];
     /* @var $token string */
