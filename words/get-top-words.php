@@ -34,7 +34,7 @@ require_once '../autoload.php';
  *              ]
  *          }
  * - On error:
- *      - Status code = 500, 400, 422, or 405
+ *      - Status code = 500, 400, 422, 401, or 405
  *      - JSON structure
  *          <pre><code>
  *          {
@@ -81,7 +81,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     }
     
     if (!$authorized) {
-        Response::errorResponse(422, 'unauthorized token');
+        Response::errorResponse(401, 'unauthorized token');
     }
     
     // Get top words from Words table
