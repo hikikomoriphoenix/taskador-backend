@@ -21,7 +21,12 @@ require_once '../autoload.php';
  *          {}
  *          </code></pre>
  * - On error:
- *      - Status code = 500, 400, 422, or 405
+ *      - Status code:
+ *          500 - Server error. Retrying the request later might fix the issue.
+ *          422 - Can't process request. Username may not exist.
+ *          401 - Unauthorized. Either token can't match or expired. Try logging
+ *              in to get a new authorization token and retry the request.
+ *          405 - Request needs to use POST method    
  *      - JSON structure:
  *          <pre><code>
  *          {
@@ -48,15 +53,15 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     } catch (NoAccountException $e) {
         Response::errorResponse(422, $e->getMessage());
     } catch (ExpiredTokenException $e) {
-        Response::errorResponse(422, $e->getMessage());
+        Response::errorResponse(401, $e->getMessage());
     } catch (NoTokenException $e) {
-        Response::errorResponse(500, $e->getMessage());
+        Response::errorResponse(401, $e->getMessage());
     }    
     
     if ($verified) {
         Response::send(array());
     } else {
-        Response::errorResponse(422, 'Submitted token is not correct.');
+        Response::errorResponse(401, 'Submitted token is not correct.');
     }
 } else {
     Response::errorResponse(405, 'Method is not POST');
