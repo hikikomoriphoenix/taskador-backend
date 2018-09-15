@@ -105,6 +105,11 @@ class TasksTest extends TestCase {
         
         $this->assertThat($tasks[0]['task'], $this->equalTo('task3'));
         $this->assertThat($tasks[2]['task'], $this->equalTo('task1'));
+        
+        $date_finished0 = $tasks[0]['date_finished'];
+        $date_finished2 = $tasks[2]['date_finished'];
+        echo "\n$date_finished0";
+        echo "\n$date_finished2";
     }
 }
 
