@@ -26,6 +26,7 @@ require_once '../autoload.php';
  *              ]
  *          }
  *          </code></pre>
+ *      - Time zone of date_finished is set to UTC
  * - On error:
  *      - Status code:
  *          500 - Server error. Retrying the request later might fix the issue.
