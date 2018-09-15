@@ -56,7 +56,7 @@ class Tasks {
      * @throws PDOException
      */
     static function saveFinishedTasks(PDO $conn, $username, $tasks) {
-        $dateFinished = date('Y-m-d');
+        $dateFinished = date('Y-m-d H:i:s');
         
         $insert = 'INSERT INTO Tasks_Finished';
         $params = 'id, username, task, date_finished';
@@ -134,8 +134,8 @@ class Tasks {
         // $day is the value of today as a number between 0-6. Getting the date
         // of sunday and saturday of this week is just a matter of getting the 
         // difference of days between today and the said days.
-        $sunday = date('Y-m-d', strtotime('-' . $day . ' days'));
-        $saturday = date('Y-m-d', strtotime('+' . (6-$day) . ' days'));
+        $sunday = date('Y-m-d 00:00:00', strtotime('-' . $day . ' days'));
+        $saturday = date('Y-m-d 23:59:59', strtotime('+' . (6-$day) . ' days'));
         $thisWeek = "date_finished BETWEEN '$sunday' AND '$saturday'"; 
         
         // Order starting from the most recently finished task
