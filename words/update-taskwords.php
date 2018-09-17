@@ -79,7 +79,8 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
             // Set the new id for last parsed task
             $lastTaskIndex = count($unparsedTasks) - 1;
             $newIdOfLastParsedTask = $unparsedTasks[$lastTaskIndex]['id'];                
-            Words::updateIdOfLastParsedTask($conn, $username, $idOfLastParsedTask);
+            Words::updateIdOfLastParsedTask($conn, $username, 
+                    $newIdOfLastParsedTask);
         }
     } catch (Exception $ex) {
         Response::errorResponse(500, 'Exception on updating words used in task:'
