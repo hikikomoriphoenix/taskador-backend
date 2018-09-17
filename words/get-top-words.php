@@ -63,7 +63,7 @@ if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST') {
     /* @var $token string */
     $token = $inputData['token'];    
     /* @var $numResults int */
-    $numResults = $input['number_of_results'];
+    $numResults = $inputData['number_of_results'];
    
     // Connect to database
     try {
