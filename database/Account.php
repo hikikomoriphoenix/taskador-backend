@@ -46,16 +46,20 @@ class Account {
      * False if it already exist.
      */
     static function usernameIsUnique($conn, $username) {
-        $findSameUsername = "SELECT id FROM Accounts WHERE username = '$username'";
-        $query = $conn->prepare($findSameUsername);
-        $query->execute();
-        $results = $query->fetchAll();
-        $numResults = count($results);
+        try {
+            $findSameUsername = "SELECT id FROM Accounts WHERE username = '$username'";
+            $query = $conn->prepare($findSameUsername);
+            $query->execute();
+            $results = $query->fetchAll();
+            $numResults = count($results);
 
-        if ($numResults > 0) {
-            return false;
-        } else {
-            return true;
+            if ($numResults > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception $ex) {
+            throw $ex;
         }
     }
     
