@@ -1,6 +1,31 @@
 <?php
 class Tasks {
     /**
+     * Add new to-do task to account and returns its id.
+     * 
+     * @param PDO $conn connection to database
+     * @param string $username account username
+     * @param string $task new task to add
+     * @return int id of new task
+     * @throws Exception
+     */
+    static function addTask(PDO $conn, $username, $task) {
+        $insert = 'INSERT INTO Tasks_ToDo';
+        $params = 'id, username, task';
+        $sql = "$insert ($params) VALUES (?, ?, ?);";
+        try {
+            $st = $conn->prepare($sql);
+            $st->bindValue(1, null);
+            $st->bindValue(2, $username);
+            $st->bindValue(3, $task);
+            $st->execute();
+            return (int) $conn->lastInsertId();  
+        } catch (Exception $ex) {
+            throw $ex;
+        }
+              
+    }
+    /**
      * Adds tasks into account.
      * 
      * @param PDO $conn connection to database
