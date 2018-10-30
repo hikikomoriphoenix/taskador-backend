@@ -11,6 +11,19 @@ class TasksTest extends TestCase {
         $this->conn = ConnectLocal::connectToLocalhostDB();        
     }
     
+    public function testAddTask() {
+        $username = 'test1';
+        $task = 'A task';
+        try {
+            /* @var $id int */
+            $id = Tasks::addTask($this->conn, $username, $task);
+            echo "id=$id";
+            $this->assertTrue(true);
+        } catch (Exception $ex) {
+            $this->fail('Exception on adding task: ' . $ex->getMessage());
+        }
+    }
+    
     public function testAddTasks() {
         $username1 = 'test1';
         $username2 = 'test2';
