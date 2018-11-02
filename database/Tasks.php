@@ -130,8 +130,10 @@ class Tasks {
     private static function prepareIdValuesString($count) {
         $idValues = '';
         for ($i = 0; $i < $count; ++$i) {
-            if ($i === 0) {
-                $idValues .= '(?';
+            if ($i === 0 && $count ===1) {
+                $idValues .= '(?)';                        
+            } else if ($i === 0) {
+                $idValues .= '(?';  
             } else if ($i === ($count - 1)) {
                 $idValues .= ', ?)';
             } else {
