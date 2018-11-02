@@ -24,6 +24,17 @@ class TasksTest extends TestCase {
         }
     }
     
+    public function testDeleteTask() {
+        $username = 'test1';
+        $id = 20;
+        try {
+            Tasks::deleteTask($this->conn, $username, $id);
+            $this->assertTrue(true);
+        } catch (Exception $ex) {
+            $this->fail('Exception on deleting task: ' . $ex->getMessage());
+        }
+    }
+    
     public function testAddTasks() {
         $username1 = 'test1';
         $username2 = 'test2';
