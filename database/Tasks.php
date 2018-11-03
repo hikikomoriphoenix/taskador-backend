@@ -22,9 +22,29 @@ class Tasks {
             return (int) $conn->lastInsertId();  
         } catch (Exception $ex) {
             throw $ex;
-        }
-              
+        }              
     }
+    
+    /**
+     * Delete a to-do task given its id.
+     * 
+     * @param PDO $conn connection to database
+     * @param type $username account username
+     * @param type $id id of to-do task to delete
+     * @throws Exception
+     */
+    static function deleteTask(PDO $conn, $username, $id) {
+        $deleteFrom__ = 'DELETE FROM Tasks_ToDo';
+        $where__ = "WHERE username = '$username'";
+        $delete = "$deleteFrom__ $where__ AND id = $id;";
+        try {
+            $st = $conn->prepare($delete);
+            $st->execute();
+        } catch (Exception $ex) {
+            throw $ex;
+        }
+    }
+    
     /**
      * Adds tasks into account.
      * 
